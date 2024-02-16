@@ -4,8 +4,11 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {},
-      colors: {},
+      colors: {
+        'default-bg': '#C9CDD4',
+        selected: '#4096ff',
+      },
     },
   },
   plugins: [],
-}
+};

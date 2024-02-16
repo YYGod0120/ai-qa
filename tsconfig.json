@@ -23,11 +23,9 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "~/*": ["types/*"]
+      "~/*": ["public/*"]
     }
   },
-  "include": ["src", "types"],
-  "exclude": [
-    "node_modules",
-  ]
+  "include": ["src", "public"],
+  "exclude": ["node_modules"]
 }

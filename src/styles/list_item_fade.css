@@ -1,0 +1,16 @@
+.left-to-right-fade {
+  position: relative;
+  overflow: hidden;
+  text-wrap: nowrap;
+}
+
+.left-to-right-fade::before {
+  content: '';
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  width: 50%;
+  height: 80%;
+  background: linear-gradient(to right, #d1e3ff00, #d1e3ff);
+  z-index: 2;
+}

@@ -15,10 +15,10 @@ const { TextArea } = Input;
 function App() {
   const title = useConversationStore((state) => state.title);
   return (
-    <div className="flex flex-row">
+    <div className="flex h-[100vh] flex-row bg-page-bg">
       <Aside />
-      <div className="flex  flex-col items-center justify-between">
-        <div className="flex h-[8vh] w-[82vw] items-center justify-between border border-default-border pl-10 text-xl leading-[8vh]">
+      <div className="flex  w-[70vw] flex-col items-center justify-between">
+        <div className="flex h-[8vh] w-[70vw] items-center justify-between border border-default-border pl-10 text-xl leading-[8vh]">
           <span className="self-start text-center">{title}</span>
           <div className="space-x-5 pr-5">
             <FileWordOutlined />
@@ -28,7 +28,7 @@ function App() {
         <div className="mb-[20vh]">
           <AiIdentity></AiIdentity>
         </div>
-        <div className=" w-[82vw] px-5 pb-8">
+        <div className=" w-[70vw] px-5 pb-8">
           <TextArea
             placeholder="Controlled autosize"
             autoSize={{ minRows: 4, maxRows: 6 }}

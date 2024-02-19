@@ -38,7 +38,7 @@ export default function Aside() {
     setSelectedId(index);
   };
   return (
-    <div className="mx-5  mb-[1vh] mt-[3vh] w-[18vw] space-y-5 rounded-2xl border border-solid border-default-border bg-bg-selected">
+    <div className="mx-5  mb-[1vh] mt-[3vh] w-aside space-y-5 rounded-2xl border border-solid border-default-border bg-bg-selected">
       <div className=" h-[8vh]  px-5 pt-5">
         <Input
           className="rounded-xl bg-white"
@@ -72,7 +72,9 @@ export default function Aside() {
                 )}
                 <span
                   className={
-                    index === selectedId ? 'left-to-right-fade ' : '  pl-[38px]'
+                    index === selectedId
+                      ? 'left-to-right-fade '
+                      : 'overflow-hidden text-nowrap pl-[38px]'
                   }
                 >
                   {item.title}

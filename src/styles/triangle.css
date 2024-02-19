@@ -1,0 +1,13 @@
+/* .triangle {
+  width: 0;
+  height: 0;
+  border-top: 30px solid #d1e3ff;
+  border-left: 30px solid transparent;
+  border-top-left-radius: 20px;
+} */
+.triangle {
+  position: relative;
+  fill: #d1e3ff;
+  stroke: #d1e3ff;
+  stroke-width: 25;
+}

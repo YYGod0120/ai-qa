@@ -1,3 +1,5 @@
+import './styles/scrollbar.css';
+
 import { StyleProvider } from '@ant-design/cssinjs';
 import { createRoot } from 'react-dom/client';
 import { HashRouter as Router } from 'react-router-dom';

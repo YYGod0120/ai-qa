@@ -12,6 +12,12 @@ module.exports = {
         selected: '#0A7EFF',
         'img-selected': '#0D81FF',
         'bg-selected': '#D1E3FF',
+        'main-divider': '#B2D2F08C',
+        conversation_font: '#2C2E4D',
+      },
+      width: {
+        aside: '342px',
+        main: '1169px',
       },
     },
   },

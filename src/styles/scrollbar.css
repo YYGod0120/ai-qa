@@ -1,0 +1,25 @@
+/* 隐藏浏览器默认滚动条 */
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #ffffff;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ffffff;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d2dde9;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: #d2dde9;
+  border-radius: 10px;
+}

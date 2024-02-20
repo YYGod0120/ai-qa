@@ -11,3 +11,9 @@
   stroke: #d1e3ff;
   stroke-width: 25;
 }
+.triangle_user {
+  position: relative;
+  fill: #e1e6ea;
+  stroke: #e1e6ea;
+  stroke-width: 25;
+}

@@ -14,6 +14,10 @@ module.exports = {
         'bg-selected': '#D1E3FF',
         'main-divider': '#B2D2F08C',
         conversation_font: '#2C2E4D',
+        'user-ask': '#E1E6EA',
+        'time-font': '#A4A4A4',
+        'bg-btns': '#F6F6FD',
+        'border-btns': '#E9F2FF',
       },
       width: {
         aside: '342px',

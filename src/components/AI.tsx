@@ -2,7 +2,11 @@ import '@/styles/triangle.css';
 
 import { ReactNode } from 'react';
 
+import again from '@/conversation_icon/again.png';
 import ai_avator from '@/conversation_icon/ai_avator.png';
+import del from '@/conversation_icon/del.png';
+import transToWord from '@/conversation_icon/transToWord.png';
+
 export default function AI({ children }: { children: ReactNode }) {
   return (
     <div className="flex items-start">
@@ -24,9 +28,31 @@ export default function AI({ children }: { children: ReactNode }) {
             points="300,190 200,290 300,290"
           />
         </svg>
-        <span className="max-w-[55vw] rounded rounded-tl-none bg-bg-selected p-3 text-conversation_font">
-          {children}
-        </span>
+        <div className="flex flex-col">
+          <span className="max-w-[55vw] rounded rounded-tl-none bg-bg-selected p-3 text-conversation_font">
+            {children}
+          </span>
+          <div className="flex w-[116px] items-center justify-between space-x-2 rounded-[1vw] border-[1px] border-border-btns bg-bg-btns px-4 py-1">
+            <img
+              src={again}
+              alt="重试"
+              title="重试"
+              className="h-[22px] w-[18px]"
+            />
+            <img
+              src={transToWord}
+              title="导出为Word"
+              alt="导出为Word"
+              className="h-[17px] w-[17px]"
+            />
+            <img
+              src={del}
+              alt="删除"
+              title="删除"
+              className="h-[19px] w-[19px]"
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

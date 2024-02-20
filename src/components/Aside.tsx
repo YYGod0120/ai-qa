@@ -32,10 +32,19 @@ export default function Aside() {
   const [selectedId, setSelectedId] = useState(0);
   const setId = useConversationStore((state) => state.setId);
   const editTitle = useConversationStore((state) => state.editTitle);
+  const setConversation = useConversationStore(
+    (state) => state.setConversation
+  );
+
   const handleClick = (index: number, title: string) => {
     setId(index);
     editTitle(title);
     setSelectedId(index);
+    setConversation([
+      {
+        AI: '您好!您可以问我任何有关于重庆的文旅信息，如历史、名人、景点、饮食特色',
+      },
+    ]);
   };
   return (
     <div className="mx-5  mb-[1vh] mt-[3vh] w-aside space-y-5 rounded-2xl border border-solid border-default-border bg-bg-selected">

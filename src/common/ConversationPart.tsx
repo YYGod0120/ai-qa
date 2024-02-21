@@ -6,17 +6,23 @@ import USER from '@/components/USER';
 export function Dialog(
   identity: 'AI' | 'USER',
   word: string,
-  other?: ReactNode
+  id: number,
+  other?: ReactNode,
+  time?: string
 ) {
-  return identity === 'AI' ? (
-    <AI>
-      <span>{word}</span>
-      {other}
-    </AI>
+  return word !== undefined ? (
+    identity === 'AI' ? (
+      <AI id={id}>
+        <span>{word}</span>
+        {other}
+      </AI>
+    ) : (
+      <USER id={id} time={time}>
+        <span>{word}</span>
+        {other}
+      </USER>
+    )
   ) : (
-    <USER>
-      <span>{word}</span>
-      {other}
-    </USER>
+    <></>
   );
 }

@@ -6,8 +6,21 @@ import again from '@/conversation_icon/again.png';
 import ai_avator from '@/conversation_icon/ai_avator.png';
 import del from '@/conversation_icon/del.png';
 import transToWord from '@/conversation_icon/transToWord.png';
+import { useConversationStore } from '@/store';
 
-export default function AI({ children }: { children: ReactNode }) {
+export default function AI({
+  children,
+  id,
+}: {
+  children: ReactNode;
+  id: number;
+}) {
+  const setConversation = useConversationStore(
+    (state) => state.setConversation
+  );
+  const conversation = useConversationStore((state) => state.conversation);
+  const newCon = conversation.filter((element, index) => index !== id);
+
   return (
     <div className="flex items-start">
       <img
@@ -50,6 +63,9 @@ export default function AI({ children }: { children: ReactNode }) {
               alt="删除"
               title="删除"
               className="h-[19px] w-[19px]"
+              onClick={() => {
+                setConversation(newCon);
+              }}
             />
           </div>
         </div>

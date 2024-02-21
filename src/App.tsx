@@ -15,6 +15,7 @@ import FQ from './components/FQ';
 // import USER from './components/USER';
 import backToBottom from './conversation_icon/back-to-bottom.png';
 import { useConversationStore } from './store';
+import { getCurrentTime } from './utils/time';
 import { doAnimation } from './utils/useAnimation';
 function handleBottomBtnClick() {
   const container = document.getElementById('conversation_box');
@@ -29,7 +30,11 @@ function handleBottomBtnClick() {
   }, 10);
 }
 
-function ConversationBox() {
+function ConversationBox({
+  handleClick,
+}: {
+  handleClick: React.Dispatch<React.SetStateAction<string>>;
+}) {
   const conversations = useConversationStore((state) => state.conversation);
   return (
     <div
@@ -42,7 +47,11 @@ function ConversationBox() {
         return Dialog(
           conversationKeys[0] as 'AI' | 'USER',
           conversationValues[0],
-          index === 0 ? <FQ /> : null
+          index,
+          index === 0 && conversationValues[0] ? (
+            <FQ handleClick={handleClick} />
+          ) : null,
+          conversationValues[1] ? conversationValues[1] : null
         );
       })}
       <img
@@ -64,7 +73,10 @@ function App() {
   const conversations = useConversationStore((state) => state.conversation);
 
   function handleOutput(words: string) {
-    setConversation([...conversations, { USER: words }]);
+    setConversation([
+      ...conversations,
+      { USER: words, time: getCurrentTime() },
+    ]);
   }
   return (
     <div className="flex h-[100vh] flex-row bg-page-bg  ">
@@ -77,11 +89,18 @@ function App() {
             </span>
             <div className="flex space-x-5 pr-5">
               <img src={export_word} alt="导出为word" title="导出为word" />
-              <img src={clear} alt="清除对话" title="清除对话" />
+              <img
+                src={clear}
+                alt="清除对话"
+                title="清除对话"
+                onClick={() => {
+                  setConversation([{}]);
+                }}
+              />
             </div>
           </div>
 
-          {ConversationBox()}
+          <ConversationBox handleClick={setInputValue}></ConversationBox>
         </div>
         <div className=" relative mt-4  w-[70vw]  px-5">
           <textarea
@@ -98,6 +117,7 @@ function App() {
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 handleOutput(inputValue);
+                e.preventDefault();
                 setInputValue('');
               }
             }}

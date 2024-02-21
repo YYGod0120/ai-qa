@@ -1,18 +1,31 @@
 import '@/styles/triangle.css';
 
-import { ReactNode, useRef } from 'react';
+import { ReactNode } from 'react';
 
 import del from '@/conversation_icon/del.png';
 import USER_avator from '@/conversation_icon/USER.png';
-import { getCurrentTime } from '@/utils/time';
+import { useConversationStore } from '@/store';
 
-export default function USER({ children }: { children: ReactNode }) {
-  const time = useRef(getCurrentTime());
+export default function USER({
+  children,
+  id,
+  time,
+}: {
+  children: ReactNode;
+  id: number;
+  time: string;
+}) {
+  const setConversation = useConversationStore(
+    (state) => state.setConversation
+  );
+  const conversation = useConversationStore((state) => state.conversation);
+  const newCon = conversation.filter((element, index) => index !== id);
+
   return (
     <div className="mr-5 flex items-center justify-end ">
       <div className="flex flex-col items-end ">
         <span className=" mb-3 translate-x-[-25px] self-end text-time-font">
-          {time.current}
+          {time}
         </span>
 
         <div className="  flex translate-x-[20px] translate-y-[-5px]">
@@ -26,6 +39,14 @@ export default function USER({ children }: { children: ReactNode }) {
                 alt="删除"
                 title="删除"
                 className="h-[19px] w-[19px]"
+                onClick={
+                  id !== 0
+                    ? () => {
+                        setConversation(newCon);
+                        console.log(newCon);
+                      }
+                    : null
+                }
               />
             </div>
           </div>

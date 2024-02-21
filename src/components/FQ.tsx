@@ -9,7 +9,11 @@ const question = [
 const question_class = 'border border-img-selected p-4 rounded';
 const question_class_select = ' bg-img-selected text-white';
 const question_class_noselect = ' bg-bg-selected  text-img-selected';
-export default function FQ() {
+export default function FQ({
+  handleClick,
+}: {
+  handleClick: React.Dispatch<React.SetStateAction<string>>;
+}) {
   const [selectId, setSelectId] = useState(question.length + 1);
   return (
     <div className="mt-5 grid cursor-pointer grid-cols-2 gap-3">
@@ -17,9 +21,14 @@ export default function FQ() {
         return (
           <div
             key={index}
-            onClick={() => {
-              setSelectId(index);
-            }}
+            onClick={
+              selectId >= question.length + 1
+                ? () => {
+                    setSelectId(index);
+                    handleClick(item);
+                  }
+                : null
+            }
             className={
               question_class +
               (selectId === index

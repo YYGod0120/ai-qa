@@ -20,7 +20,7 @@ export default function USER({ children }: { children: ReactNode }) {
             <span className="max-w-[50vw]  rounded rounded-tr-none bg-user-ask p-3 text-conversation_font">
               {children}
             </span>
-            <div className="flex w-[56px] justify-center rounded-[1vw]   border-[1px]  border-border-btns bg-bg-btns px-1 py-1">
+            <div className="flex w-[56px] justify-center rounded-[1vw] border-[1px]  border-border-btns bg-bg-btns px-1 py-1">
               <img
                 src={del}
                 alt="删除"

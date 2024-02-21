@@ -7,6 +7,7 @@ import clear from './aside_icon/clean_con.png';
 import export_word from './aside_icon/export_word.png';
 import full_scene from './aside_icon/full_scene.png';
 import history from './aside_icon/history.png';
+import smaller from './aside_icon/smaller.png';
 import { Dialog } from './common/ConversationPart';
 // import AiIdentity from './components/AiIdentity';
 import Aside from './components/Aside';
@@ -47,7 +48,7 @@ function ConversationBox() {
       <img
         src={backToBottom}
         alt=""
-        className=" fixed bottom-[100px] left-[85vw] "
+        className=" fixed bottom-[120px]  left-[85vw]"
         onClick={handleBottomBtnClick}
       />
     </div>
@@ -55,6 +56,7 @@ function ConversationBox() {
 }
 function App() {
   const [inputValue, setInputValue] = useState('');
+  const [largerInput, setLargerInput] = useState(false);
   const title = useConversationStore((state) => state.title);
   const setConversation = useConversationStore(
     (state) => state.setConversation
@@ -67,8 +69,8 @@ function App() {
   return (
     <div className="flex h-[100vh] flex-row bg-page-bg  ">
       <Aside />
-      <div className="box-shadow  mb-[1vh] mt-[3vh] flex w-[70vw] flex-col items-center justify-between rounded-2xl bg-white">
-        <div className="h-[85vh]">
+      <div className="box-shadow  mb-[1vh] mt-[3vh] flex w-[70vw] flex-col rounded-2xl bg-white">
+        <div className={largerInput ? 'h-[40vh]' : 'h-[85vh]'}>
           <div className="flex  w-[70vw] items-center justify-between rounded-t-2xl border-b-2 border-main-divider bg-gradient-to-r from-[#F6F9FE] via-transparent to-[#FFFFFF] pl-10 text-xl leading-[8vh]">
             <span className="self-start text-center text-default-font">
               {title}
@@ -81,9 +83,13 @@ function App() {
 
           {ConversationBox()}
         </div>
-        <div className=" relative  mb-8 w-[70vw] px-5">
-          <input
-            className="text-input-shadow h-[59px] w-[68vw] rounded-md px-4 py-2  text-base outline-none"
+        <div className=" relative mt-4  w-[70vw]  px-5">
+          <textarea
+            className={
+              largerInput
+                ? 'text-input-shadow h-[52vh] w-[68vw] resize-none rounded-md px-4 py-2  text-base outline-none'
+                : 'text-input-shadow h-[59px] w-[68vw] resize-none rounded-md px-4 text-base leading-[59px] outline-none'
+            }
             placeholder="请问我任何关于重庆文旅的问题"
             value={inputValue}
             onChange={(event) => {
@@ -95,11 +101,24 @@ function App() {
                 setInputValue('');
               }
             }}
-          ></input>
+          ></textarea>
 
-          <div className=" absolute bottom-[50%] right-8  flex  translate-y-[50%] space-x-4">
+          <div
+            className={
+              largerInput
+                ? ' absolute  right-8  flex translate-y-[-200%] space-x-4 '
+                : 'absolute bottom-[50%] right-8  flex  translate-y-[50%] space-x-4'
+            }
+          >
             <img src={history} alt="历史记录" title="历史记录" />
-            <img src={full_scene} alt="全屏" title="全屏" />
+            <img
+              src={largerInput ? smaller : full_scene}
+              alt="全屏"
+              title="全屏"
+              onClick={() => {
+                setLargerInput(!largerInput);
+              }}
+            />
           </div>
         </div>
       </div>

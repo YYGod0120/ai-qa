@@ -28,7 +28,7 @@ export default function USER({
           {time}
         </span>
 
-        <div className="  flex translate-x-[20px] translate-y-[-5px]">
+        <div className="  flex translate-x-[20px] ">
           <div className="flex flex-col items-end">
             <span className="max-w-[50vw]  rounded rounded-tr-none bg-user-ask p-3 text-conversation_font">
               {children}

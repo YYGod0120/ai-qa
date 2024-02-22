@@ -12,6 +12,7 @@ import { Dialog } from './common/ConversationPart';
 // import AiIdentity from './components/AiIdentity';
 import Aside from './components/Aside';
 import FQ from './components/FQ';
+import Popup from './components/Popup';
 // import USER from './components/USER';
 import backToBottom from './conversation_icon/back-to-bottom.png';
 import { useConversationStore } from './store';
@@ -32,8 +33,13 @@ function handleBottomBtnClick() {
 
 function ConversationBox({
   handleClick,
+  handleDelete,
 }: {
   handleClick: React.Dispatch<React.SetStateAction<string>>;
+  handleDelete: (
+    | React.Dispatch<React.SetStateAction<string>>
+    | React.Dispatch<React.SetStateAction<number>>
+  )[];
 }) {
   const conversations = useConversationStore((state) => state.conversation);
   return (
@@ -48,6 +54,7 @@ function ConversationBox({
           conversationKeys[0] as 'AI' | 'USER',
           conversationValues[0],
           index,
+          handleDelete,
           index === 0 && conversationValues[0] ? (
             <FQ handleClick={handleClick} />
           ) : null,
@@ -66,6 +73,8 @@ function ConversationBox({
 function App() {
   const [inputValue, setInputValue] = useState('');
   const [largerInput, setLargerInput] = useState(false);
+  const [delTitle, setDelTitle] = useState('');
+  const [deleteId, setDeleteId] = useState<number>(null);
   const title = useConversationStore((state) => state.title);
   const setConversation = useConversationStore(
     (state) => state.setConversation
@@ -78,6 +87,8 @@ function App() {
       { USER: words, time: getCurrentTime() },
     ]);
   }
+  const deleteFns = [setDelTitle, setDeleteId];
+
   return (
     <div className="flex h-[100vh] flex-row bg-page-bg  ">
       <Aside />
@@ -94,13 +105,16 @@ function App() {
                 alt="清除对话"
                 title="清除对话"
                 onClick={() => {
-                  setConversation([{}]);
+                  setDelTitle('确认清除该对话中所有问答记录?');
                 }}
               />
             </div>
           </div>
 
-          <ConversationBox handleClick={setInputValue}></ConversationBox>
+          <ConversationBox
+            handleClick={setInputValue}
+            handleDelete={deleteFns}
+          ></ConversationBox>
         </div>
         <div className=" relative mt-4  w-[70vw]  px-5">
           <textarea
@@ -142,6 +156,15 @@ function App() {
           </div>
         </div>
       </div>
+      {delTitle ? (
+        <Popup
+          title={delTitle}
+          handleComfirm={setDelTitle}
+          id={deleteId}
+        ></Popup>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }

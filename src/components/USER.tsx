@@ -4,23 +4,19 @@ import { ReactNode } from 'react';
 
 import del from '@/conversation_icon/del.png';
 import USER_avator from '@/conversation_icon/USER.png';
-import { useConversationStore } from '@/store';
 
 export default function USER({
   children,
   id,
   time,
+  handleDelete,
 }: {
   children: ReactNode;
   id: number;
   time: string;
+  handleDelete: React.Dispatch<React.SetStateAction<string | number>>[];
 }) {
-  const setConversation = useConversationStore(
-    (state) => state.setConversation
-  );
-  const conversation = useConversationStore((state) => state.conversation);
-  const newCon = conversation.filter((element, index) => index !== id);
-
+  const [setDelTitle, setDeleteId] = handleDelete;
   return (
     <div className="mr-5 flex items-center justify-end ">
       <div className="flex flex-col items-end ">
@@ -42,8 +38,8 @@ export default function USER({
                 onClick={
                   id !== 0
                     ? () => {
-                        setConversation(newCon);
-                        console.log(newCon);
+                        setDelTitle('确认删除本对话？');
+                        setDeleteId(id);
                       }
                     : null
                 }

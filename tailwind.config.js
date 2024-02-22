@@ -18,6 +18,9 @@ module.exports = {
         'time-font': '#A4A4A4',
         'bg-btns': '#F6F6FD',
         'border-btns': '#E9F2FF',
+        'border-popup': '#8D9EB1',
+        'bg-popup-confirm': '#1384FF',
+        'bg-popup-cancel': '#E1E6EA',
       },
       width: {
         aside: '342px',

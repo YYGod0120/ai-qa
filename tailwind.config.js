@@ -21,6 +21,8 @@ module.exports = {
         'border-popup': '#8D9EB1',
         'bg-popup-confirm': '#1384FF',
         'bg-popup-cancel': '#E1E6EA',
+        'bg-history': '#ECF1F6',
+        'bg-divider': '#A4A6C1',
       },
       width: {
         aside: '342px',

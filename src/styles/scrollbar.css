@@ -7,19 +7,23 @@
 ::-webkit-scrollbar-track {
   background: #ffffff;
   border-radius: 10px;
+  display: none;
 }
 
 ::-webkit-scrollbar-thumb {
   background: #ffffff;
   border-radius: 10px;
+  display: none;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: #d2dde9;
   border-radius: 10px;
+  display: inline;
 }
 
 ::-webkit-scrollbar-thumb:active {
   background: #d2dde9;
   border-radius: 10px;
+  display: inline;
 }

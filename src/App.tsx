@@ -12,6 +12,7 @@ import { Dialog } from './common/ConversationPart';
 // import AiIdentity from './components/AiIdentity';
 import Aside from './components/Aside';
 import FQ from './components/FQ';
+import History from './components/History';
 import Popup from './components/Popup';
 // import USER from './components/USER';
 import backToBottom from './conversation_icon/back-to-bottom.png';
@@ -75,6 +76,7 @@ function App() {
   const [largerInput, setLargerInput] = useState(false);
   const [delTitle, setDelTitle] = useState('');
   const [deleteId, setDeleteId] = useState<number>(null);
+  const [historyPopup, setHistoryPopup] = useState(false);
   const title = useConversationStore((state) => state.title);
   const setConversation = useConversationStore(
     (state) => state.setConversation
@@ -144,7 +146,14 @@ function App() {
                 : 'absolute bottom-[50%] right-8  flex  translate-y-[50%] space-x-4'
             }
           >
-            <img src={history} alt="历史记录" title="历史记录" />
+            <img
+              src={history}
+              alt="历史记录"
+              title="历史记录"
+              onClick={() => {
+                setHistoryPopup(true);
+              }}
+            />
             <img
               src={largerInput ? smaller : full_scene}
               alt="全屏"
@@ -165,6 +174,7 @@ function App() {
       ) : (
         <></>
       )}
+      {historyPopup ? <History handleClose={setHistoryPopup} /> : null}
     </div>
   );
 }

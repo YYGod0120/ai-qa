@@ -12,13 +12,11 @@ export default function History({
   handleClose: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const conversations = useConversationStore((state) => state.conversation);
-
+  const converTitle = useConversationStore((state) => state.title);
   return (
     <div className="popup-shadow absolute left-[50%] top-[50%] h-[500px] w-[800px] translate-x-[-50%] translate-y-[-50%] rounded-xl bg-bg-history">
       <div className="flex  items-center justify-between  rounded-t-xl bg-white p-[15px] text-lg">
-        <span className=" translate-x-[250px] self-center">
-          2月10日-重庆-旅行攻略
-        </span>
+        <span className=" translate-x-[250px] self-center">{converTitle}</span>
         <img
           src={close_history}
           alt=""

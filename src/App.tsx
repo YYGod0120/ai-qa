@@ -19,6 +19,7 @@ import backToBottom from './conversation_icon/back-to-bottom.png';
 import { useConversationStore } from './store';
 import { getCurrentTime } from './utils/time';
 import { doAnimation } from './utils/useAnimation';
+import { useTranslateHtml } from './utils/useTranslate';
 function handleBottomBtnClick() {
   const container = document.getElementById('conversation_box');
   let startTop = container.scrollTop;
@@ -82,13 +83,14 @@ function App() {
     (state) => state.setConversation
   );
   const conversations = useConversationStore((state) => state.conversation);
-
+  const handleExport = useTranslateHtml();
   function handleOutput(words: string) {
     setConversation([
       ...conversations,
       { USER: words, time: getCurrentTime() },
     ]);
   }
+
   const deleteFns = [setDelTitle, setDeleteId];
 
   return (
@@ -101,7 +103,14 @@ function App() {
               {title}
             </span>
             <div className="flex space-x-5 pr-5">
-              <img src={export_word} alt="导出为word" title="导出为word" />
+              <img
+                src={export_word}
+                alt="导出为word"
+                title="导出为word"
+                onClick={() => {
+                  handleExport();
+                }}
+              />
               <img
                 src={clear}
                 alt="清除对话"

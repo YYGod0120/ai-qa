@@ -36,12 +36,15 @@ function handleBottomBtnClick() {
 function ConversationBox({
   handleClick,
   handleDelete,
+  handleExport,
 }: {
   handleClick: React.Dispatch<React.SetStateAction<string>>;
   handleDelete: (
     | React.Dispatch<React.SetStateAction<string>>
     | React.Dispatch<React.SetStateAction<number>>
   )[];
+  // eslint-disable-next-line no-unused-vars
+  handleExport: (id?: number) => Promise<void>;
 }) {
   const conversations = useConversationStore((state) => state.conversation);
   return (
@@ -57,6 +60,7 @@ function ConversationBox({
           conversationValues[0],
           index,
           handleDelete,
+          handleExport,
           index === 0 && conversationValues[0] ? (
             <FQ handleClick={handleClick} />
           ) : null,
@@ -125,6 +129,7 @@ function App() {
           <ConversationBox
             handleClick={setInputValue}
             handleDelete={deleteFns}
+            handleExport={handleExport}
           ></ConversationBox>
         </div>
         <div className=" relative mt-4  w-[70vw]  px-5">

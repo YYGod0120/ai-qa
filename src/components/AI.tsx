@@ -10,11 +10,14 @@ import transToWord from '@/conversation_icon/transToWord.png';
 export default function AI({
   children,
   handleDelete,
+  handleExport,
   id,
 }: {
   children: ReactNode;
   id: number;
   handleDelete: React.Dispatch<React.SetStateAction<string | number>>[];
+  // eslint-disable-next-line no-unused-vars
+  handleExport: (id: number) => Promise<void>;
 }) {
   const [setDelTitle, setDeleteId] = handleDelete;
   return (
@@ -53,6 +56,9 @@ export default function AI({
               title="导出为Word"
               alt="导出为Word"
               className="h-[17px] w-[17px]"
+              onClick={() => {
+                handleExport(id);
+              }}
             />
             <img
               src={del}

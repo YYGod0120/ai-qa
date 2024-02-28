@@ -25,10 +25,14 @@ const DATA = [
 
 const classname_noselected =
   'mb-3 h-[65px]  text-xl leading-[65px] flex items-center justify-between px-5 rounded-lg';
-const classanme_selected =
+const classname_selected =
   classname_noselected + ' ' + 'border  text-selected mb-3 ';
 const iconShapes = 'h-[30px] w-[30px]';
-export default function Aside() {
+export default function Aside({
+  handleChooseIdentity,
+}: {
+  handleChooseIdentity: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const [selectedId, setSelectedId] = useState(0);
   const setId = useConversationStore((state) => state.setId);
   const editTitle = useConversationStore((state) => state.editTitle);
@@ -64,13 +68,14 @@ export default function Aside() {
             <div
               className={
                 index === selectedId
-                  ? classanme_selected + ' bg-bg-selected' + ' border-selected'
+                  ? classname_selected + ' bg-bg-selected' + ' border-selected'
                   : classname_noselected +
                     ' bg-white' +
                     ' border-default-border'
               }
               onClick={() => {
                 handleClick(index, item.title);
+                handleChooseIdentity(false);
               }}
             >
               <div className=" flex items-center  space-x-2 ">

@@ -21,7 +21,7 @@ type Conversation = {
 export const useConversationStore = create<Conversation>((set) => ({
   id: 0,
   title: '新对话',
-  identity: 'default',
+  identity: 'common',
   conversation: [
     {
       AI: '您好!您可以问我任何有关于重庆的文旅信息，如历史、名人、景点、饮食特色',

@@ -9,6 +9,7 @@ import full_scene from './aside_icon/full_scene.png';
 import history from './aside_icon/history.png';
 import smaller from './aside_icon/smaller.png';
 import { Dialog } from './common/ConversationPart';
+import AiIdentity from './components/AiIdentity';
 // import AiIdentity from './components/AiIdentity';
 import Aside from './components/Aside';
 import FQ from './components/FQ';
@@ -82,6 +83,7 @@ function App() {
   const [delTitle, setDelTitle] = useState('');
   const [deleteId, setDeleteId] = useState<number>(null);
   const [historyPopup, setHistoryPopup] = useState(false);
+  const [chooseIdentityDone, setChooseIdentityDone] = useState(false);
   const title = useConversationStore((state) => state.title);
   const setConversation = useConversationStore(
     (state) => state.setConversation
@@ -99,7 +101,7 @@ function App() {
 
   return (
     <div className="flex h-[100vh] flex-row bg-page-bg  ">
-      <Aside />
+      <Aside handleChooseIdentity={setChooseIdentityDone} />
       <div className="box-shadow  mb-[1vh] mt-[3vh] flex w-[70vw] flex-col rounded-2xl bg-white">
         <div className={largerInput ? 'h-[40vh]' : 'h-[85vh]'}>
           <div className="flex  w-[70vw] items-center justify-between rounded-t-2xl border-b-2 border-main-divider bg-gradient-to-r from-[#F6F9FE] via-transparent to-[#FFFFFF] pl-10 text-xl leading-[8vh]">
@@ -126,11 +128,15 @@ function App() {
             </div>
           </div>
 
-          <ConversationBox
-            handleClick={setInputValue}
-            handleDelete={deleteFns}
-            handleExport={handleExport}
-          ></ConversationBox>
+          {chooseIdentityDone ? (
+            <ConversationBox
+              handleClick={setInputValue}
+              handleDelete={deleteFns}
+              handleExport={handleExport}
+            ></ConversationBox>
+          ) : (
+            <></>
+          )}
         </div>
         <div className=" relative mt-4  w-[70vw]  px-5">
           <textarea
@@ -182,13 +188,18 @@ function App() {
       {delTitle ? (
         <Popup
           title={delTitle}
-          handleComfirm={setDelTitle}
+          handleConfirm={setDelTitle}
           id={deleteId}
         ></Popup>
       ) : (
         <></>
       )}
       {historyPopup ? <History handleClose={setHistoryPopup} /> : null}
+      {!chooseIdentityDone ? (
+        <AiIdentity handleChooseIdentity={setChooseIdentityDone}></AiIdentity>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }

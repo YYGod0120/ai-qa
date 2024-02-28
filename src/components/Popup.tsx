@@ -1,12 +1,12 @@
 import { useConversationStore } from '@/store';
 export default function Popup({
   title,
-  handleComfirm,
+  handleConfirm,
   id,
 }: {
   id?: number;
   title: string;
-  handleComfirm: React.Dispatch<React.SetStateAction<string>>;
+  handleConfirm: React.Dispatch<React.SetStateAction<string>>;
 }) {
   const setConversation = useConversationStore(
     (state) => state.setConversation
@@ -21,7 +21,7 @@ export default function Popup({
           className="h-[46px] w-[170px] rounded-xl bg-bg-popup-confirm text-white"
           onClick={() => {
             setConversation(newCon);
-            handleComfirm('');
+            handleConfirm('');
           }}
         >
           确认
@@ -29,7 +29,7 @@ export default function Popup({
         <button
           className="h-[46px] w-[170px] rounded-xl bg-bg-popup-cancel"
           onClick={() => {
-            handleComfirm('');
+            handleConfirm('');
           }}
         >
           取消

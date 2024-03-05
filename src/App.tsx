@@ -85,7 +85,7 @@ function App() {
   const [delTitle, setDelTitle] = useState('');
   const [deleteId, setDeleteId] = useState<number>(null);
   const [historyPopup, setHistoryPopup] = useState(false);
-  const [chooseIdentityDone, setChooseIdentityDone] = useState(false);
+  const [chooseIdentityDone, setChooseIdentityDone] = useState(true);
   const title = useConversationStore((state) => state.title);
   const setConversation = useConversationStore(
     (state) => state.setConversation

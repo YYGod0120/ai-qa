@@ -22,6 +22,7 @@ export default function Aside({
 }) {
   const [selectedId, setSelectedId] = useState(0);
   const [session, setSession] = useState<SessionGetResDatum[]>([]);
+  const [editingId, setEditingId] = useState(-1);
   const setId = useConversationStore((state) => state.setId);
   const identity = useConversationStore((state) => state.identity);
   const editTitle = useConversationStore((state) => state.editTitle);
@@ -37,6 +38,8 @@ export default function Aside({
     getData();
   }, []);
   const handleClick = (index: number, title: string) => {
+    console.log(editingId);
+
     setId(index);
     editTitle(title);
     setSelectedId(index);
@@ -73,8 +76,8 @@ export default function Aside({
                 // TODO uuid改为title
                 handleClick(index, item.uuid);
                 setIdentity(item.metadata.category);
+                setEditingId(-1);
                 if (identity === '') {
-                  console.log(identity);
                   handleChooseIdentity(false);
                 } else {
                   handleChooseIdentity(true);
@@ -87,15 +90,29 @@ export default function Aside({
                 ) : (
                   <></>
                 )}
-                <span
-                  className={
-                    index === selectedId
-                      ? 'left-to-right-fade w-[200px]'
-                      : 'overflow-hidden text-nowrap pl-[38px] w-[250px]'
-                  }
-                >
-                  {'uuid改为title123465uuid改为title123465'}
-                </span>
+
+                {editingId === index ? (
+                  <input
+                    className="w-[200px] overflow-hidden h-[50px] bg-page-bg border-2 border-solid border-default-border text-default-font"
+                    defaultValue={'uuid改为title123465uuid改为title123465'}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                    onChange={(e) => {
+                      editTitle(e.target.value);
+                    }}
+                  ></input>
+                ) : (
+                  <span
+                    className={
+                      index === selectedId
+                        ? 'left-to-right-fade w-[200px]'
+                        : 'overflow-hidden text-nowrap pl-[38px] w-[250px]'
+                    }
+                  >
+                    {'uuid改为title123465uuid改为title123465'}
+                  </span>
+                )}
               </div>
               {index === selectedId ? (
                 <div className="flex space-x-5">
@@ -103,6 +120,10 @@ export default function Aside({
                     src={edit}
                     className="h-[20px] w-[20px]"
                     title={item.uuid}
+                    onClick={(e) => {
+                      setEditingId(index === editingId ? -1 : index);
+                      e.stopPropagation();
+                    }}
                   />
                   <img src={top} className="h-[20px] w-[20px]" />
                 </div>

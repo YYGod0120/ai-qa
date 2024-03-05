@@ -14,9 +14,11 @@ import AiIdentity from './components/AiIdentity';
 import Aside from './components/Aside';
 import FQ from './components/FQ';
 import History from './components/History';
+import Login from './components/Login';
 import Popup from './components/Popup';
 // import USER from './components/USER';
 import backToBottom from './conversation_icon/back-to-bottom.png';
+import { postChatPost } from './service/chat';
 import { useConversationStore } from './store';
 import { getCurrentTime } from './utils/time';
 import { doAnimation } from './utils/useAnimation';
@@ -90,11 +92,19 @@ function App() {
   );
   const conversations = useConversationStore((state) => state.conversation);
   const handleExport = useTranslateHtml();
-  function handleOutput(words: string) {
+  async function handleOutput(words_human: string) {
     setConversation([
       ...conversations,
-      { USER: words, time: getCurrentTime() },
+      { HUMAN: words_human, time: getCurrentTime() },
     ]);
+    // TODO 1.发送用户输入的问题到后端
+    const { data } = await postChatPost({
+      session_id: 'b02',
+      category: 'type',
+      content: '它的反函数是什么',
+    });
+    const { answer } = data;
+    setConversation([...conversations, { AI: answer }]);
   }
 
   const deleteFns = [setDelTitle, setDeleteId];
@@ -200,6 +210,7 @@ function App() {
       ) : (
         <></>
       )}
+      {<Login></Login>}
     </div>
   );
 }

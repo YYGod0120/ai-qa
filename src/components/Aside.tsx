@@ -2,27 +2,14 @@ import '@/styles/list_item_fade.css';
 
 import { DeleteOutlined, SearchOutlined } from '@ant-design/icons';
 import { Button, Input, List } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import edit from '@/aside_icon/edit.png';
 import message from '@/aside_icon/message.png';
 import top from '@/aside_icon/top.png';
+import { getSessionGet } from '@/service/session';
 import { useConversationStore } from '@/store';
-const DATA = [
-  {
-    title: '2月10日-重庆-旅行攻略',
-  },
-  {
-    title: '2月10日-重庆-旅行攻略',
-  },
-  {
-    title: '2月10日-重庆-旅行攻略',
-  },
-  {
-    title: '2月10日-重庆-旅行攻略',
-  },
-];
-
+import { SessionGetResDatum } from '@/types/session';
 const classname_noselected =
   'mb-3 h-[65px]  text-xl leading-[65px] flex items-center justify-between px-5 rounded-lg';
 const classname_selected =
@@ -34,12 +21,21 @@ export default function Aside({
   handleChooseIdentity: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [selectedId, setSelectedId] = useState(0);
+  const [session, setSession] = useState<SessionGetResDatum[]>([]);
   const setId = useConversationStore((state) => state.setId);
+  const identity = useConversationStore((state) => state.identity);
   const editTitle = useConversationStore((state) => state.editTitle);
+  const setIdentity = useConversationStore((state) => state.setIdentity);
   const setConversation = useConversationStore(
     (state) => state.setConversation
   );
-
+  useEffect(() => {
+    async function getData() {
+      const session = await getSessionGet();
+      setSession(session.data);
+    }
+    getData();
+  }, []);
   const handleClick = (index: number, title: string) => {
     setId(index);
     editTitle(title);
@@ -63,7 +59,7 @@ export default function Aside({
       <div className="flex h-[85vh] cursor-pointer flex-col justify-between bg-bg-selected px-3 pb-5">
         <List
           itemLayout="horizontal"
-          dataSource={DATA}
+          dataSource={session}
           renderItem={(item, index) => (
             <div
               className={
@@ -74,8 +70,15 @@ export default function Aside({
                     ' border-default-border'
               }
               onClick={() => {
-                handleClick(index, item.title);
-                handleChooseIdentity(false);
+                // TODO uuid改为title
+                handleClick(index, item.uuid);
+                setIdentity(item.metadata.category);
+                if (identity === '') {
+                  console.log(identity);
+                  handleChooseIdentity(false);
+                } else {
+                  handleChooseIdentity(true);
+                }
               }}
             >
               <div className=" flex items-center  space-x-2 ">
@@ -87,11 +90,11 @@ export default function Aside({
                 <span
                   className={
                     index === selectedId
-                      ? 'left-to-right-fade '
-                      : 'overflow-hidden text-nowrap pl-[38px]'
+                      ? 'left-to-right-fade w-[200px]'
+                      : 'overflow-hidden text-nowrap pl-[38px] w-[250px]'
                   }
                 >
-                  {item.title}
+                  {'uuid改为title123465uuid改为title123465'}
                 </span>
               </div>
               {index === selectedId ? (
@@ -99,7 +102,7 @@ export default function Aside({
                   <img
                     src={edit}
                     className="h-[20px] w-[20px]"
-                    title={item.title}
+                    title={item.uuid}
                   />
                   <img src={top} className="h-[20px] w-[20px]" />
                 </div>
@@ -117,6 +120,9 @@ export default function Aside({
               color: 'white',
               border: 'none',
             }}
+            onClick={() => {
+              // TODO 接口新增对话
+            }}
           >
             + 创建新对话
           </Button>
@@ -126,6 +132,9 @@ export default function Aside({
               backgroundColor: '#DEDCFC',
               color: '#8C7BF7',
               border: 'none',
+            }}
+            onClick={() => {
+              // TODO 接口删除对话
             }}
             icon={<DeleteOutlined />}
           >

@@ -30,8 +30,8 @@ export function useTranslateHtml() {
         const conversation_user = conversations[id - 1];
         const content = [
           {
-            content: conversation_user.USER,
-            title: 'USER' + ' ' + conversation_user.time,
+            content: conversation_user.HUMAN,
+            title: 'HUMAN' + ' ' + conversation_user.time,
           },
           { content: conversation_ai.AI, title: 'AI' },
         ];

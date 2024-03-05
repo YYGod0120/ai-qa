@@ -4,7 +4,7 @@ type Conversation = {
   id: number;
   title: string;
   identity: string;
-  conversation: Partial<Record<'AI' | 'USER' | 'time', string>>[];
+  conversation: Partial<Record<'AI' | 'HUMAN' | 'time', string>>[];
 
   // eslint-disable-next-line no-unused-vars
   setId: (id: number) => void;
@@ -14,7 +14,7 @@ type Conversation = {
   setIdentity: (identity: string) => void;
   setConversation: (
     // eslint-disable-next-line no-unused-vars
-    conversation: Partial<Record<'AI' | 'USER' | 'time', string>>[]
+    conversation: Partial<Record<'AI' | 'HUMAN' | 'time', string>>[]
   ) => void;
 };
 
@@ -31,6 +31,6 @@ export const useConversationStore = create<Conversation>((set) => ({
   editTitle: (title: string) => set(() => ({ title: title })),
   setIdentity: (identity: string) => set(() => ({ identity: identity })),
   setConversation: (
-    conversation: Partial<Record<'AI' | 'USER' | 'time', string>>[]
+    conversation: Partial<Record<'AI' | 'HUMAN' | 'time', string>>[]
   ) => set(() => ({ conversation: conversation })),
 }));

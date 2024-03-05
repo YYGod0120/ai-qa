@@ -32,7 +32,7 @@ export default defineConfig({
     cors: true,
     proxy: {
       '/api': {
-        target: 'https://be-dev.redrock.cqupt.edu.cn',
+        target: 'http://47.115.205.73:5000/',
         changeOrigin: true,
         rewrite: (path: string): string => path.replace(/^\/api/, ''),
       },

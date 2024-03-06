@@ -19,6 +19,7 @@ export interface SessionGetResDatum {
 
 interface SessionGetResMetadata {
   category: string;
+  title?: string;
 }
 
 export interface ISessionPostReq {

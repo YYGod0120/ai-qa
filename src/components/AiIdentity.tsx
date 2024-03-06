@@ -2,6 +2,7 @@ import { UserOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { useState } from 'react';
 
+import { postSessionPost } from '@/service/session';
 import { useConversationStore } from '@/store';
 
 const buttons = [
@@ -51,6 +52,7 @@ export default function AiIdentity({
         className="mx-[15vw] w-[10vw]"
         onClick={() => {
           setIdentity(buttons[identityId].categories);
+          postSessionPost({ category: buttons[identityId].categories });
           handleChooseIdentity(true);
         }}
       >

@@ -1,5 +1,3 @@
-import { AxiosRequestConfig } from 'axios';
-
 import {
   ISessionDeleteReq,
   ISessionDeleteRes,
@@ -22,8 +20,15 @@ export const postSessionPost = async (
 };
 
 export const deleteSessionDelete = async (
-  payload: AxiosRequestConfig<{ data: ISessionDeleteReq }>
+  payload: ISessionDeleteReq
 ): Promise<ISessionDeleteRes> => {
   const res = await service.delete(`/session`, { data: payload });
+  return res.data;
+};
+export const putSessionTitle = async (payload: {
+  session_id: string;
+  title: string;
+}): Promise<ISessionPostRes> => {
+  const res = await service.put(`/session/title`, payload);
   return res.data;
 };

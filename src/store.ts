@@ -1,13 +1,13 @@
 import { create } from 'zustand';
 
 type Conversation = {
-  id: number;
+  id: string;
   title: string;
   identity: string;
   conversation: Partial<Record<'AI' | 'HUMAN' | 'time', string>>[];
 
   // eslint-disable-next-line no-unused-vars
-  setId: (id: number) => void;
+  setId: (id: string) => void;
   // eslint-disable-next-line no-unused-vars
   editTitle: (title: string) => void;
   // eslint-disable-next-line no-unused-vars
@@ -19,7 +19,7 @@ type Conversation = {
 };
 
 export const useConversationStore = create<Conversation>((set) => ({
-  id: 0,
+  id: 'null',
   title: '新对话',
   identity: 'common',
   conversation: [
@@ -27,7 +27,7 @@ export const useConversationStore = create<Conversation>((set) => ({
       AI: '您好!您可以问我任何有关于重庆的文旅信息，如历史、名人、景点、饮食特色',
     },
   ],
-  setId: (id: number) => set(() => ({ id: id })),
+  setId: (id: string) => set(() => ({ id: id })),
   editTitle: (title: string) => set(() => ({ title: title })),
   setIdentity: (identity: string) => set(() => ({ identity: identity })),
   setConversation: (

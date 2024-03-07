@@ -16,8 +16,10 @@ const buttons = [
 ];
 export default function AiIdentity({
   handleChooseIdentity,
+  getData,
 }: {
   handleChooseIdentity: React.Dispatch<React.SetStateAction<boolean>>;
+  getData: any;
 }) {
   const [identityId, setIdentityId] = useState(0);
   const setIdentity = useConversationStore((state) => state.setIdentity);
@@ -50,10 +52,15 @@ export default function AiIdentity({
       <Button
         size="large"
         className="mx-[15vw] w-[10vw]"
-        onClick={() => {
+        onClick={async () => {
           setIdentity(buttons[identityId].categories);
-          postSessionPost({ category: buttons[identityId].categories });
-          handleChooseIdentity(true);
+          const rep = await postSessionPost({
+            category: buttons[identityId].categories,
+          });
+          if (rep.info === 'success') {
+            handleChooseIdentity(true);
+            getData();
+          }
         }}
       >
         确定

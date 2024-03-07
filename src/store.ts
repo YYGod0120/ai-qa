@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 
+import { SessionGetResDatum } from './types/session';
+
 type Conversation = {
   id: string;
   title: string;
@@ -33,4 +35,13 @@ export const useConversationStore = create<Conversation>((set) => ({
   setConversation: (
     conversation: Partial<Record<'AI' | 'HUMAN' | 'time', string>>[]
   ) => set(() => ({ conversation: conversation })),
+}));
+export const useAsideStore = create<{
+  sessions: SessionGetResDatum[];
+  // eslint-disable-next-line no-unused-vars
+  setSessions: (session: SessionGetResDatum[]) => void;
+}>((set) => ({
+  sessions: [],
+  setSessions: (session: SessionGetResDatum[]) =>
+    set(() => ({ sessions: session })),
 }));

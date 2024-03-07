@@ -6,7 +6,7 @@ import { postLoginPost } from '@/service/user';
 
 export function Login() {
   const [isModalOpen, setIsModalOpen] = useState(
-    localStorage.getItem('access_token') === ''
+    localStorage.getItem('refresh_token') === null
   );
   const onFinish = async (values: { username: string; password: string }) => {
     const { username, password } = values;
@@ -14,10 +14,12 @@ export function Login() {
       username: username,
       password: password,
     });
-    localStorage.setItem('user_id', data.data.user_id);
-    localStorage.setItem('access_token', data.data.access_token);
-    localStorage.setItem('refresh_token', data.data.refresh_token);
-    setIsModalOpen(false);
+    if (data.status === 0) {
+      localStorage.setItem('user_id', data.data.user_id);
+      localStorage.setItem('access_token', data.data.access_token);
+      localStorage.setItem('refresh_token', data.data.refresh_token);
+      setIsModalOpen(false);
+    }
   };
 
   return (

@@ -2,18 +2,14 @@ import '@/styles/list_item_fade.css';
 
 import { DeleteOutlined, SearchOutlined } from '@ant-design/icons';
 import { Button, Input, List } from 'antd';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import edit from '@/aside_icon/edit.png';
 import message from '@/aside_icon/message.png';
 import top from '@/aside_icon/top.png';
-import {
-  deleteSessionDelete,
-  getSessionGet,
-  putSessionTitle,
-} from '@/service/session';
-import { useConversationStore } from '@/store';
-import { SessionGetResDatum } from '@/types/session';
+import { getHistoryGet } from '@/service/chat';
+import { deleteSessionDelete, putSessionTitle } from '@/service/session';
+import { useAsideStore, useConversationStore } from '@/store';
 const classname_noselected =
   'mb-3 h-[65px]  text-xl leading-[65px] flex items-center justify-between px-5 rounded-lg';
 const classname_selected =
@@ -21,11 +17,12 @@ const classname_selected =
 const iconShapes = 'h-[30px] w-[30px]';
 export default function Aside({
   handleChooseIdentity,
+  getData,
 }: {
   handleChooseIdentity: React.Dispatch<React.SetStateAction<boolean>>;
+  getData: any;
 }) {
   const [selectedId, setSelectedId] = useState('');
-  const [session, setSession] = useState<SessionGetResDatum[]>([]);
   const [editingId, setEditingId] = useState(-1);
   const title = useConversationStore((state) => state.title);
   const id = useConversationStore((state) => state.id);
@@ -35,26 +32,15 @@ export default function Aside({
   const setConversation = useConversationStore(
     (state) => state.setConversation
   );
-  async function getData() {
-    const session = await getSessionGet();
-    const newSession = session.data.map((item) => {
-      return {
-        ...item,
-        metadata: {
-          ...item.metadata,
-          title: item.metadata.title ? item.metadata.title : '新对话',
-        },
-      };
-    });
-    setSession(newSession);
-  }
-  useEffect(() => {
-    getData();
-  }, []);
-  const handleClick = (index: string, title: string) => {
+  const sessions = useAsideStore((state) => state.sessions);
+  const setSession = useAsideStore((state) => state.setSessions);
+
+  const handleClick = async (index: string, title: string) => {
     setId(index);
     editTitle(title);
     setSelectedId(index);
+    const history = await getHistoryGet({ session_id: id });
+    console.log(history);
     setConversation([
       {
         AI: '您好!您可以问我任何有关于重庆的文旅信息，如历史、名人、景点、饮食特色',
@@ -74,7 +60,7 @@ export default function Aside({
       <div className="flex h-[85vh] cursor-pointer flex-col justify-between bg-bg-selected px-3 pb-5">
         <List
           itemLayout="horizontal"
-          dataSource={session}
+          dataSource={sessions}
           renderItem={(item, index) => (
             <div
               className={
@@ -85,7 +71,6 @@ export default function Aside({
                     ' border-default-border'
               }
               onClick={() => {
-                // TODO uuid改为title
                 handleClick(item.session_id, item.metadata.title);
                 setIdentity(item.metadata.category);
                 setEditingId(-1);
@@ -132,15 +117,16 @@ export default function Aside({
                     src={edit}
                     className="h-[20px] w-[20px]"
                     title={item.metadata.title}
-                    onClick={(e) => {
+                    onClick={async (e) => {
                       setEditingId(index === editingId ? -1 : index);
                       if (index === editingId) {
-                        // TODO 本地修改title
-                        putSessionTitle({
+                        const rep = await putSessionTitle({
                           session_id: item.session_id,
                           title: title,
                         });
-                        getData();
+                        if (rep.info) {
+                          getData();
+                        }
                       }
                       e.stopPropagation();
                     }}
@@ -162,9 +148,8 @@ export default function Aside({
               border: 'none',
             }}
             onClick={() => {
-              // handleChooseIdentity(false);
               setSession([
-                ...session,
+                ...sessions,
                 {
                   created_at: '',
                   id: -1,

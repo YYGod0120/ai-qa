@@ -18,7 +18,12 @@ export function Dialog(
 ) {
   return word !== undefined ? (
     identity === 'AI' ? (
-      <AI id={id} handleDelete={handleDelete} handleExport={handleExport}>
+      <AI
+        id={id}
+        handleDelete={handleDelete}
+        handleExport={handleExport}
+        time={time}
+      >
         <span>{word}</span>
         {other}
       </AI>

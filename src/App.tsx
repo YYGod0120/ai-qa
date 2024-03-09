@@ -18,10 +18,10 @@ import Login from './components/Login';
 import Popup from './components/Popup';
 // import USER from './components/USER';
 import backToBottom from './conversation_icon/back-to-bottom.png';
-import { postChatPost } from './service/chat';
+import { getHistoryGet, postChatPost } from './service/chat';
 import { getSessionGet } from './service/session';
 import { useAsideStore, useConversationStore } from './store';
-import { getCurrentTime } from './utils/time';
+import { formattedTimed, getCurrentTime } from './utils/time';
 import { doAnimation } from './utils/useAnimation';
 import { useTranslateHtml } from './utils/useTranslate';
 function handleBottomBtnClick() {
@@ -65,7 +65,9 @@ function ConversationBox({
           index,
           handleDelete,
           handleExport,
-          index === 0 && conversationValues[0] ? (
+          index === 0 &&
+            conversationValues[0] &&
+            conversationKeys[0] === 'AI' ? (
             <FQ handleClick={handleClick} />
           ) : null,
           conversationValues[1] ? conversationValues[1] : null
@@ -90,13 +92,17 @@ function App() {
   const title = useConversationStore((state) => state.title);
   const id = useConversationStore((state) => state.id);
   const identity = useConversationStore((state) => state.identity);
-
+  const sessionsHistory = useAsideStore((state) => state.sessionsHistory);
+  const setSessionsHistory = useAsideStore((state) => state.setSessionsHistory);
   const setConversation = useConversationStore(
     (state) => state.setConversation
   );
   const conversations = useConversationStore((state) => state.conversation);
+  const sessions = useAsideStore((state) => state.sessions);
+
   const setAsideSession = useAsideStore((state) => state.setSessions);
   const handleExport = useTranslateHtml();
+
   async function getData() {
     const session = await getSessionGet();
     const newSession = session.data.map((item) => {
@@ -108,22 +114,41 @@ function App() {
         },
       };
     });
+    const allHistory = await Promise.all(
+      newSession.map(async (session) => {
+        const conversation = await getHistoryGet({
+          session_id: session.session_id,
+        });
+        return {
+          sessionId: session.session_id,
+          history: conversation.data.map((data) => ({
+            [data.role.toUpperCase()]: data.content,
+            time: formattedTimed(data.created_at),
+          })),
+        };
+      })
+    );
+    setSessionsHistory([...sessionsHistory, ...allHistory]);
     setAsideSession(newSession);
   }
 
   async function handleOutput(words_human: string) {
-    setConversation([
-      ...conversations,
-      { HUMAN: words_human, time: getCurrentTime() },
-    ]);
-    // TODO 1.发送用户输入的问题到后端
+    const askTime = getCurrentTime();
+    setConversation([...conversations, { HUMAN: words_human, time: askTime }]);
+    // TODO 加个加载
     const { data } = await postChatPost({
       session_id: id,
       category: identity,
       content: words_human,
     });
     const { answer } = data;
-    setConversation([...conversations, { AI: answer }]);
+    console.log(answer);
+    const resTime = getCurrentTime();
+    setConversation([
+      ...conversations,
+      { HUMAN: words_human, time: askTime },
+      { AI: answer, time: resTime },
+    ]);
   }
 
   const deleteFns = [setDelTitle, setDeleteId];
@@ -132,7 +157,11 @@ function App() {
   }, []);
   return (
     <div className="flex h-[100vh] flex-row bg-page-bg ">
-      <Aside handleChooseIdentity={setChooseIdentityDone} getData={getData} />
+      {sessions.length > 0 && conversations.length > 0 ? (
+        <Aside handleChooseIdentity={setChooseIdentityDone} getData={getData} />
+      ) : (
+        <></>
+      )}
       <div className="box-shadow  mb-[1vh] mt-[3vh] flex w-[70vw] flex-col rounded-2xl bg-white">
         <div className={largerInput ? 'h-[40vh]' : 'h-[85vh]'}>
           <div className="flex  w-[70vw] items-center justify-between rounded-t-2xl border-b-2 border-main-divider bg-gradient-to-r from-[#F6F9FE] via-transparent to-[#FFFFFF] pl-10 text-xl leading-[8vh]">

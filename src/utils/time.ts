@@ -8,3 +8,7 @@ export function getCurrentTime() {
 
   return formattedTime; // 或者返回 currentTime，根据需要
 }
+export function formattedTimed(time: string) {
+  const parsedTime = dayjs(time);
+  return parsedTime.format('YYYY-MM-DD HH:mm:ss');
+}

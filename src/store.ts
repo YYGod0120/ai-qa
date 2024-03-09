@@ -36,12 +36,34 @@ export const useConversationStore = create<Conversation>((set) => ({
     conversation: Partial<Record<'AI' | 'HUMAN' | 'time', string>>[]
   ) => set(() => ({ conversation: conversation })),
 }));
-export const useAsideStore = create<{
+
+type AsideStore = {
   sessions: SessionGetResDatum[];
+  sessionsHistory: {
+    sessionId: string;
+    history: Partial<Record<'AI' | 'HUMAN' | 'time', string>>[];
+  }[];
   // eslint-disable-next-line no-unused-vars
   setSessions: (session: SessionGetResDatum[]) => void;
-}>((set) => ({
+  // eslint-disable-next-line no-unused-vars
+  setSessionsHistory: (
+    // eslint-disable-next-line no-unused-vars
+    sessionsHistory: {
+      sessionId: string;
+      history: Partial<Record<'AI' | 'HUMAN' | 'time', string>>[];
+    }[]
+  ) => void;
+};
+
+export const useAsideStore = create<AsideStore>((set) => ({
   sessions: [],
+  sessionsHistory: [],
   setSessions: (session: SessionGetResDatum[]) =>
     set(() => ({ sessions: session })),
+  setSessionsHistory: (
+    sessionsHistory: {
+      sessionId: string;
+      history: Partial<Record<'AI' | 'HUMAN' | 'time', string>>[];
+    }[]
+  ) => set(() => ({ sessionsHistory: sessionsHistory })),
 }));

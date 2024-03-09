@@ -6,7 +6,7 @@ const BASE_URL = '/api';
 
 export const service = axios.create({
   baseURL: BASE_URL,
-  timeout: 10000,
+  timeout: 50000,
 });
 service.interceptors.request.use((config) => {
   const token = localStorage.getItem('access_token');

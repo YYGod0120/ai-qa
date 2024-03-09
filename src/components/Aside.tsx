@@ -2,14 +2,14 @@ import '@/styles/list_item_fade.css';
 
 import { DeleteOutlined, SearchOutlined } from '@ant-design/icons';
 import { Button, Input, List } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import edit from '@/aside_icon/edit.png';
 import message from '@/aside_icon/message.png';
 import top from '@/aside_icon/top.png';
-import { getHistoryGet } from '@/service/chat';
 import { deleteSessionDelete, putSessionTitle } from '@/service/session';
 import { useAsideStore, useConversationStore } from '@/store';
+
 const classname_noselected =
   'mb-3 h-[65px]  text-xl leading-[65px] flex items-center justify-between px-5 rounded-lg';
 const classname_selected =
@@ -34,19 +34,31 @@ export default function Aside({
   );
   const sessions = useAsideStore((state) => state.sessions);
   const setSession = useAsideStore((state) => state.setSessions);
+  const sessionsHistory = useAsideStore((state) => state.sessionsHistory);
 
   const handleClick = async (index: string, title: string) => {
     setId(index);
     editTitle(title);
     setSelectedId(index);
-    const history = await getHistoryGet({ session_id: id });
-    console.log(history);
-    setConversation([
-      {
-        AI: '您好!您可以问我任何有关于重庆的文旅信息，如历史、名人、景点、饮食特色',
-      },
-    ]);
+    const history = sessionsHistory.filter((item) => {
+      return item.sessionId === index;
+    })[0];
+    if (history.history.length > 0) {
+      setConversation(history.history);
+    } else {
+      setConversation([
+        {
+          AI: '您好!您可以问我任何有关于重庆的文旅信息，如历史、名人、景点、饮食特色',
+        },
+      ]);
+    }
   };
+  useEffect(() => {
+    handleClick(
+      sessions[0].session_id,
+      sessions[0].metadata.title ? sessions[0].metadata.title : '新对话'
+    );
+  }, []);
   return (
     <div className="mx-5  mb-[1vh] mt-[3vh] w-aside space-y-5 rounded-2xl border border-solid border-default-border bg-bg-selected">
       <div className=" h-[8vh]  px-5 pt-5">

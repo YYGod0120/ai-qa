@@ -1,6 +1,7 @@
 import './index.css';
 import './styles/shadow.css';
 
+import { Spin } from 'antd';
 import { useEffect, useState } from 'react';
 
 import clear from './aside_icon/clean_con.png';
@@ -84,6 +85,7 @@ function ConversationBox({
 }
 function App() {
   const [inputValue, setInputValue] = useState('');
+  const [loading, setLoading] = useState(true);
   const [largerInput, setLargerInput] = useState(false);
   const [delTitle, setDelTitle] = useState('');
   const [deleteId, setDeleteId] = useState<number>(null);
@@ -98,7 +100,6 @@ function App() {
     (state) => state.setConversation
   );
   const conversations = useConversationStore((state) => state.conversation);
-  const sessions = useAsideStore((state) => state.sessions);
 
   const setAsideSession = useAsideStore((state) => state.setSessions);
   const handleExport = useTranslateHtml();
@@ -130,6 +131,7 @@ function App() {
     );
     setSessionsHistory([...sessionsHistory, ...allHistory]);
     setAsideSession(newSession);
+    setLoading(false);
   }
 
   async function handleOutput(words_human: string) {
@@ -157,11 +159,12 @@ function App() {
   }, []);
   return (
     <div className="flex h-[100vh] flex-row bg-page-bg ">
-      {sessions.length > 0 && conversations.length > 0 ? (
-        <Aside handleChooseIdentity={setChooseIdentityDone} getData={getData} />
-      ) : (
-        <></>
-      )}
+      <Aside
+        handleChooseIdentity={setChooseIdentityDone}
+        getData={getData}
+        loading={loading}
+      />
+
       <div className="box-shadow  mb-[1vh] mt-[3vh] flex w-[70vw] flex-col rounded-2xl bg-white">
         <div className={largerInput ? 'h-[40vh]' : 'h-[85vh]'}>
           <div className="flex  w-[70vw] items-center justify-between rounded-t-2xl border-b-2 border-main-divider bg-gradient-to-r from-[#F6F9FE] via-transparent to-[#FFFFFF] pl-10 text-xl leading-[8vh]">
@@ -188,14 +191,16 @@ function App() {
             </div>
           </div>
 
-          {chooseIdentityDone ? (
+          {chooseIdentityDone && !loading ? (
             <ConversationBox
               handleClick={setInputValue}
               handleDelete={deleteFns}
               handleExport={handleExport}
             ></ConversationBox>
           ) : (
-            <></>
+            <div className="flex items-center justify-center h-[70vh]">
+              <Spin size="large" />
+            </div>
           )}
         </div>
         <div className=" relative mt-4  w-[70vw]  px-5">

@@ -17,9 +17,11 @@ const classname_selected =
 const iconShapes = 'h-[30px] w-[30px]';
 export default function Aside({
   handleChooseIdentity,
+  loading,
   getData,
 }: {
   handleChooseIdentity: React.Dispatch<React.SetStateAction<boolean>>;
+  loading: boolean;
   getData: any;
 }) {
   const [selectedId, setSelectedId] = useState('');
@@ -54,11 +56,13 @@ export default function Aside({
     }
   };
   useEffect(() => {
-    handleClick(
-      sessions[0].session_id,
-      sessions[0].metadata.title ? sessions[0].metadata.title : '新对话'
-    );
-  }, []);
+    if (!loading) {
+      handleClick(
+        sessions[0].session_id,
+        sessions[0].metadata.title ? sessions[0].metadata.title : '新对话'
+      );
+    }
+  }, [loading]);
   return (
     <div className="mx-5  mb-[1vh] mt-[3vh] w-aside space-y-5 rounded-2xl border border-solid border-default-border bg-bg-selected">
       <div className=" h-[8vh]  px-5 pt-5">
@@ -72,7 +76,7 @@ export default function Aside({
       <div className="flex h-[85vh] cursor-pointer flex-col justify-between bg-bg-selected px-3 pb-5">
         <List
           itemLayout="horizontal"
-          dataSource={sessions}
+          dataSource={!loading ? sessions : []}
           renderItem={(item, index) => (
             <div
               className={

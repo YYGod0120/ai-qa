@@ -2,7 +2,7 @@ import './index.css';
 import './styles/shadow.css';
 
 import { Spin } from 'antd';
-import { useEffect, useState } from 'react';
+import { ForwardedRef, forwardRef, useEffect, useRef, useState } from 'react';
 
 import clear from './aside_icon/clean_con.png';
 import export_word from './aside_icon/export_word.png';
@@ -38,11 +38,7 @@ function handleBottomBtnClick() {
   }, 10);
 }
 
-function ConversationBox({
-  handleClick,
-  handleDelete,
-  handleExport,
-}: {
+interface ConversationBoxProps {
   handleClick: React.Dispatch<React.SetStateAction<string>>;
   handleDelete: (
     | React.Dispatch<React.SetStateAction<string>>
@@ -50,39 +46,47 @@ function ConversationBox({
   )[];
   // eslint-disable-next-line no-unused-vars
   handleExport: (id?: number) => Promise<void>;
-}) {
-  const conversations = useConversationStore((state) => state.conversation);
-  return (
-    <div
-      className=" ml-5 mt-5 h-[70vh] space-y-7 overflow-y-scroll"
-      id="conversation_box"
-    >
-      {conversations.map((conversation, index) => {
-        const conversationValues = Object.values(conversation);
-        const conversationKeys = Object.keys(conversation);
-        return Dialog(
-          conversationKeys[0] as 'AI' | 'USER',
-          conversationValues[0],
-          index,
-          handleDelete,
-          handleExport,
-          index === 0 &&
-            conversationValues[0] &&
-            conversationKeys[0] === 'AI' ? (
-            <FQ handleClick={handleClick} />
-          ) : null,
-          conversationValues[1] ? conversationValues[1] : null
-        );
-      })}
-      <img
-        src={backToBottom}
-        alt=""
-        className=" fixed bottom-[120px]  left-[85vw]"
-        onClick={handleBottomBtnClick}
-      />
-    </div>
-  );
 }
+const ConversationBox = forwardRef(
+  (
+    { handleClick, handleDelete, handleExport }: ConversationBoxProps,
+    ref: ForwardedRef<HTMLDivElement>
+  ) => {
+    const conversations = useConversationStore((state) => state.conversation);
+    return (
+      <div
+        ref={ref}
+        className=" ml-5 mt-5 h-[70vh] space-y-7 overflow-y-scroll"
+        id="conversation_box"
+      >
+        {conversations.map((conversation, index) => {
+          const conversationValues = Object.values(conversation);
+          const conversationKeys = Object.keys(conversation);
+          return Dialog(
+            conversationKeys[0] as 'AI' | 'USER',
+            conversationValues[0],
+            index,
+            handleDelete,
+            handleExport,
+            index === 0 &&
+              conversationValues[0] &&
+              conversationKeys[0] === 'AI' ? (
+              <FQ handleClick={handleClick} />
+            ) : null,
+            conversationValues[1] ? conversationValues[1] : null
+          );
+        })}
+        <img
+          src={backToBottom}
+          alt=""
+          className=" fixed bottom-[120px]  left-[85vw]"
+          onClick={handleBottomBtnClick}
+        />
+      </div>
+    );
+  }
+);
+ConversationBox.displayName = 'ConversationBox';
 function App() {
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(true);
@@ -91,14 +95,15 @@ function App() {
   const [deleteId, setDeleteId] = useState<number>(null);
   const [historyPopup, setHistoryPopup] = useState(false);
   const [chooseIdentityDone, setChooseIdentityDone] = useState(true);
+  const conversation_box = useRef(null);
   const title = useConversationStore((state) => state.title);
   const id = useConversationStore((state) => state.id);
   const identity = useConversationStore((state) => state.identity);
   const sessionsHistory = useAsideStore((state) => state.sessionsHistory);
   const setSessionsHistory = useAsideStore((state) => state.setSessionsHistory);
-  const setConversation = useConversationStore(
-    (state) => state.setConversation
-  );
+  const setConversation = useConversationStore((state) => {
+    return state.setConversation;
+  });
   const conversations = useConversationStore((state) => state.conversation);
 
   const setAsideSession = useAsideStore((state) => state.setSessions);
@@ -137,7 +142,7 @@ function App() {
   async function handleOutput(words_human: string) {
     const askTime = getCurrentTime();
     setConversation([...conversations, { HUMAN: words_human, time: askTime }]);
-    // TODO 加个加载
+    conversation_box.current.scrollTop = conversation_box.current.scrollHeight;
     const { data } = await postChatPost({
       session_id: id,
       category: identity,
@@ -151,12 +156,20 @@ function App() {
       { HUMAN: words_human, time: askTime },
       { AI: answer, time: resTime },
     ]);
+    conversation_box.current.scrollTop = conversation_box.current.scrollHeight;
   }
 
   const deleteFns = [setDelTitle, setDeleteId];
   useEffect(() => {
     getData();
   }, []);
+  useEffect(() => {
+    if (conversation_box.current) {
+      console.log(conversation_box.current.scrollHeight);
+      conversation_box.current.scrollTop =
+        conversation_box.current.scrollHeight;
+    }
+  }, [conversations]);
   return (
     <div className="flex h-[100vh] flex-row bg-page-bg ">
       <Aside
@@ -196,6 +209,7 @@ function App() {
               handleClick={setInputValue}
               handleDelete={deleteFns}
               handleExport={handleExport}
+              ref={conversation_box}
             ></ConversationBox>
           ) : (
             <div className="flex items-center justify-center h-[70vh]">

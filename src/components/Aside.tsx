@@ -1,6 +1,6 @@
 import '@/styles/list_item_fade.css';
 
-import { DeleteOutlined, SearchOutlined } from '@ant-design/icons';
+import { DeleteOutlined } from '@ant-design/icons';
 import { Button, Input, List } from 'antd';
 import { useEffect, useState } from 'react';
 
@@ -15,6 +15,7 @@ const classname_noselected =
 const classname_selected =
   classname_noselected + ' ' + 'border  text-selected mb-3 ';
 const iconShapes = 'h-[30px] w-[30px]';
+const { Search } = Input;
 export default function Aside({
   handleChooseIdentity,
   loading,
@@ -37,6 +38,7 @@ export default function Aside({
   const sessions = useAsideStore((state) => state.sessions);
   const setSession = useAsideStore((state) => state.setSessions);
   const sessionsHistory = useAsideStore((state) => state.sessionsHistory);
+  const [filterStr, setFilterStr] = useState<string>('');
 
   const handleClick = async (index: string, title: string) => {
     setId(index);
@@ -66,17 +68,25 @@ export default function Aside({
   return (
     <div className="mx-5  mb-[1vh] mt-[3vh] w-aside space-y-5 rounded-2xl border border-solid border-default-border bg-bg-selected">
       <div className=" h-[8vh]  px-5 pt-5">
-        <Input
+        <Search
           className="rounded-xl bg-white"
           placeholder="搜索历史记录"
-          addonBefore={<SearchOutlined></SearchOutlined>}
+          onSearch={(value) => {
+            setFilterStr(value);
+          }}
         />
       </div>
 
       <div className="flex h-[85vh] cursor-pointer flex-col justify-between bg-bg-selected px-3 pb-5">
         <List
           itemLayout="horizontal"
-          dataSource={!loading ? sessions : []}
+          dataSource={
+            !loading
+              ? sessions.filter((i) => {
+                  return i.metadata.title.includes(filterStr);
+                })
+              : []
+          }
           renderItem={(item, index) => (
             <div
               className={

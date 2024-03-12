@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 
 import edit from '@/aside_icon/edit.png';
 import message from '@/aside_icon/message.png';
-import top from '@/aside_icon/top.png';
 import { deleteSessionDelete, putSessionTitle } from '@/service/session';
 import { useAsideStore, useConversationStore } from '@/store';
 
@@ -157,7 +156,6 @@ export default function Aside({
                       e.stopPropagation();
                     }}
                   />
-                  <img src={top} className="h-[20px] w-[20px]" />
                 </div>
               ) : (
                 <></>

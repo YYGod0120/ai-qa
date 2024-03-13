@@ -58,10 +58,9 @@ export default function Aside({
   };
   useEffect(() => {
     if (!loading) {
-      handleClick(
-        sessions[0].session_id,
-        sessions[0].metadata.title ? sessions[0].metadata.title : '新对话'
-      );
+      if (sessions.length > 0) {
+        handleClick(sessions[0].session_id, sessions[0].metadata.title);
+      }
     }
   }, [loading]);
   return (

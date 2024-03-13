@@ -19,7 +19,7 @@ import Login from './components/Login';
 import Popup from './components/Popup';
 // import USER from './components/USER';
 import backToBottom from './conversation_icon/back-to-bottom.png';
-import { getHistoryGet, postChatPost } from './service/chat';
+import { getHistoryGet, new_chat, postMes } from './service/chat';
 import { getSessionGet } from './service/session';
 import { useAsideStore, useConversationStore } from './store';
 import { formattedTimed, getCurrentTime } from './utils/time';
@@ -90,6 +90,11 @@ ConversationBox.displayName = 'ConversationBox';
 function App() {
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(true);
+  //设置对话框禁用
+  const [handleOutputOver, setHandleOutputOver] = useState(true);
+  // ai res
+  const renderAIRes = useRef('');
+
   const [largerInput, setLargerInput] = useState(false);
   const [delTitle, setDelTitle] = useState('');
   const [deleteId, setDeleteId] = useState<number>(null);
@@ -140,23 +145,44 @@ function App() {
   }
 
   async function handleOutput(words_human: string) {
+    setHandleOutputOver(false);
     const askTime = getCurrentTime();
     setConversation([...conversations, { HUMAN: words_human, time: askTime }]);
     conversation_box.current.scrollTop = conversation_box.current.scrollHeight;
-    const { data } = await postChatPost({
+    const rep = await new_chat({
       session_id: id,
       category: identity,
       content: words_human,
     });
-    const { answer } = data;
-    console.log(answer);
-    const resTime = getCurrentTime();
-    setConversation([
-      ...conversations,
-      { HUMAN: words_human, time: askTime },
-      { AI: answer, time: resTime },
-    ]);
-    conversation_box.current.scrollTop = conversation_box.current.scrollHeight;
+    const reader = rep.body.getReader();
+    const decoder = new TextDecoder();
+
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) {
+        postMes({ session_id: id, answer: renderAIRes.current });
+        renderAIRes.current = '';
+        break;
+      }
+      const decoded = decoder.decode(value, { stream: true });
+      console.log(decoded);
+      renderAIRes.current += decoded + '\n';
+      console.log(renderAIRes.current);
+
+      setConversation([
+        ...conversations,
+        { HUMAN: words_human, time: askTime },
+        { AI: renderAIRes.current, time: askTime },
+      ]);
+    }
+    // TODO 研究一下
+
+    //   conversation_box.current.scrollTop =
+    //     conversation_box.current.scrollHeight;
+    // }
+
+    setHandleOutputOver(true);
   }
 
   const deleteFns = [setDelTitle, setDeleteId];
@@ -165,7 +191,6 @@ function App() {
   }, []);
   useEffect(() => {
     if (conversation_box.current) {
-      console.log(conversation_box.current.scrollHeight);
       conversation_box.current.scrollTop =
         conversation_box.current.scrollHeight;
     }
@@ -236,6 +261,7 @@ function App() {
                 setInputValue('');
               }
             }}
+            disabled={!handleOutputOver}
           ></textarea>
 
           <div

@@ -21,7 +21,7 @@ import Popup from './components/Popup';
 import backToBottom from './conversation_icon/back-to-bottom.png';
 import { getHistoryGet, new_chat, postMes } from './service/chat';
 import { getSessionGet } from './service/session';
-import { useAsideStore, useConversationStore } from './store';
+import { useAsideStore, useConversationStore, useIsTakingStore } from './store';
 import { formattedTimed, getCurrentTime } from './utils/time';
 import { doAnimation } from './utils/useAnimation';
 import { useTranslateHtml } from './utils/useTranslate';
@@ -53,6 +53,7 @@ const ConversationBox = forwardRef(
     ref: ForwardedRef<HTMLDivElement>
   ) => {
     const conversations = useConversationStore((state) => state.conversation);
+    const handleOverTaking = useIsTakingStore((state) => state.setIsTaking);
     return (
       <div
         ref={ref}
@@ -60,7 +61,7 @@ const ConversationBox = forwardRef(
         id="conversation_box"
       >
         {conversations.map((conversation, index) => {
-          const conversationValues = Object.values(conversation);
+          const conversationValues = Object.values(conversation); //1是时间 0是对话内容
           const conversationKeys = Object.keys(conversation);
           return Dialog(
             conversationKeys[0] as 'AI' | 'USER',
@@ -68,18 +69,21 @@ const ConversationBox = forwardRef(
             index,
             handleDelete,
             handleExport,
+            handleOverTaking,
             index === 0 &&
               conversationValues[0] &&
               conversationKeys[0] === 'AI' ? (
               <FQ handleClick={handleClick} />
             ) : null,
-            conversationValues[1] ? conversationValues[1] : null
+            (conversationValues[1] as string)
+              ? (conversationValues[1] as string)
+              : null
           );
         })}
         <img
           src={backToBottom}
           alt=""
-          className=" fixed bottom-[120px]  left-[85vw]"
+          className="fixed bottom-[120px]  left-[85vw]"
           onClick={handleBottomBtnClick}
         />
       </div>
@@ -110,7 +114,8 @@ function App() {
     return state.setConversation;
   });
   const conversations = useConversationStore((state) => state.conversation);
-
+  const talking = useIsTakingStore((state) => state.isTaking);
+  const setIsTaking = useIsTakingStore((state) => state.setIsTaking);
   const setAsideSession = useAsideStore((state) => state.setSessions);
   const handleExport = useTranslateHtml();
 
@@ -130,13 +135,41 @@ function App() {
         const conversation = await getHistoryGet({
           session_id: session.session_id,
         });
-        return {
-          sessionId: session.session_id,
-          history: conversation.data.map((data) => ({
-            [data.role.toUpperCase()]: data.content,
-            time: formattedTimed(data.created_at),
-          })),
-        };
+        if (conversation.data.length > 0) {
+          return {
+            sessionId: session.session_id,
+            history: conversation.data.map((data) => {
+              if (data.role.toUpperCase() === 'AI') {
+                return {
+                  [data.role.toUpperCase()]: [
+                    { answer: data.content, isChatting: false },
+                  ],
+                  time: formattedTimed(data.created_at),
+                };
+              } else {
+                return {
+                  [data.role.toUpperCase()]: data.content,
+                  time: formattedTimed(data.created_at),
+                };
+              }
+            }),
+          };
+        } else {
+          return {
+            sessionId: session.session_id,
+            history: [
+              {
+                AI: [
+                  {
+                    answer:
+                      '您好!您可以问我任何有关于重庆的文旅信息，如历史、名人、景点、饮食特色',
+                  },
+                ],
+                time: getCurrentTime(),
+              },
+            ],
+          };
+        }
       })
     );
     setSessionsHistory([...sessionsHistory, ...allHistory]);
@@ -160,29 +193,46 @@ function App() {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const { done, value } = await reader.read();
+
+      if (!talking) {
+        setIsTaking(true);
+        const decoded = decoder.decode(value, { stream: true });
+        console.log(decoded);
+        setConversation([
+          ...conversations,
+          { HUMAN: words_human, time: askTime },
+          {
+            AI: [
+              { answer: renderAIRes.current, isChatting: false },
+              { answer: decoded, isChatting: true },
+            ],
+            time: getCurrentTime(),
+          },
+        ]);
+        renderAIRes.current += decoded;
+      }
+
       if (done) {
-        postMes({ session_id: id, answer: renderAIRes.current });
-        renderAIRes.current = '';
+        setConversation([
+          ...conversations,
+          { HUMAN: words_human, time: askTime },
+          {
+            AI: [{ answer: renderAIRes.current, isChatting: false }],
+            time: getCurrentTime(),
+          },
+        ]);
+
+        const data = await postMes({
+          session_id: id,
+          answer: renderAIRes.current,
+        });
+        if (data.status === 200) {
+          renderAIRes.current = '';
+          setHandleOutputOver(true);
+        }
         break;
       }
-      const decoded = decoder.decode(value, { stream: true });
-      console.log(decoded);
-      renderAIRes.current += decoded + '\n';
-      console.log(renderAIRes.current);
-
-      setConversation([
-        ...conversations,
-        { HUMAN: words_human, time: askTime },
-        { AI: renderAIRes.current, time: askTime },
-      ]);
     }
-    // TODO 研究一下
-
-    //   conversation_box.current.scrollTop =
-    //     conversation_box.current.scrollHeight;
-    // }
-
-    setHandleOutputOver(true);
   }
 
   const deleteFns = [setDelTitle, setDeleteId];
@@ -267,7 +317,7 @@ function App() {
           <div
             className={
               largerInput
-                ? ' absolute  right-8  flex translate-y-[-200%] space-x-4 '
+                ? 'absolute  right-8  flex translate-y-[-200%] space-x-4 '
                 : 'absolute bottom-[50%] right-8  flex  translate-y-[50%] space-x-4'
             }
           >

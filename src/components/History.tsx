@@ -5,7 +5,8 @@ import { useState } from 'react';
 import ai_avator from '@/conversation_icon/ai_avator.png';
 import close_history from '@/conversation_icon/close_history.png';
 import USER_avator from '@/conversation_icon/USER.png';
-import { useConversationStore } from '@/store';
+import { AI, useConversationStore } from '@/store';
+import { DealAnswer } from '@/utils/DealAnswer';
 const { Search } = Input;
 export default function History({
   handleClose,
@@ -44,10 +45,10 @@ export default function History({
         {conversations
           .filter((item) => {
             const conversationValues = Object.values(item);
-            return conversationValues[0].includes(filterStr);
+            return (conversationValues[0] as string).includes(filterStr);
           })
           .map((conversation, index) => {
-            const conversationValues = Object.values(conversation);
+            const conversationValues = Object.values(conversation); //0是对话内容，1是时间
             const conversationKeys = Object.keys(conversation);
             return (
               <div className="flex flex-row space-x-5 " key={index}>
@@ -58,9 +59,13 @@ export default function History({
                 />
                 <div className="flex flex-col ">
                   <div className="mb-3 text-sm text-time-font">
-                    {conversationValues[1] ? conversationValues[1] : ''}
+                    {conversationValues[1] as string}
                   </div>
-                  <div>{conversationValues[0]}</div>
+                  <div>
+                    {conversationKeys[0] === 'HUMAN'
+                      ? (conversationValues[0] as string)
+                      : DealAnswer(conversationValues[0] as AI)}
+                  </div>
                   <div className=" my-[25px]  h-[1px] bg-bg-divider"></div>
                 </div>
               </div>

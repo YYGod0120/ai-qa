@@ -1,6 +1,7 @@
 import { IChatPostReq, IHistoryGetReq, IHistoryGetRes } from '../types/chat';
 import { service } from './index';
 // import { postRefreshPost } from './user';
+// import { postRefreshPost } from './user';
 
 export const getHistoryGet = async ({
   session_id,
@@ -31,7 +32,8 @@ export async function new_chat(payload) {
       body: JSON.stringify(payload),
     });
     console.log(response);
-    // if (response.body.statusCode === 20002) {
+    // @ts-ignore
+    // if (response.body.status === 20002) {
     //   const newAccessToken = await postRefreshPost({
     //     refresh_token: localStorage.getItem('refresh_token'),
     //   });

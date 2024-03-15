@@ -1,12 +1,23 @@
 import { create } from 'zustand';
 
 import { SessionGetResDatum } from './types/session';
+import { getCurrentTime } from './utils/time';
+// * 身份，时间以及是否正在对话
+export type AI = {
+  answer: string;
+  isChatting?: boolean; //判断是否要用打字机样式
+}[];
+type ConversationHistory = {
+  AI?: AI;
+  HUMAN?: string;
+  time: string;
+};
 
 type Conversation = {
   id: string;
   title: string;
   identity: string;
-  conversation: Partial<Record<'AI' | 'HUMAN' | 'time', string>>[];
+  conversation: ConversationHistory[];
 
   // eslint-disable-next-line no-unused-vars
   setId: (id: string) => void;
@@ -16,7 +27,7 @@ type Conversation = {
   setIdentity: (identity: string) => void;
   setConversation: (
     // eslint-disable-next-line no-unused-vars
-    conversation: Partial<Record<'AI' | 'HUMAN' | 'time', string>>[]
+    conversation: ConversationHistory[]
   ) => void;
 };
 
@@ -26,22 +37,36 @@ export const useConversationStore = create<Conversation>((set) => ({
   identity: 'common',
   conversation: [
     {
-      AI: '您好!您可以问我任何有关于重庆的文旅信息，如历史、名人、景点、饮食特色',
+      AI: [
+        {
+          answer:
+            '您好!您可以问我任何有关于重庆的文旅信息，如历史、名人、景点、饮食特色',
+        },
+      ],
+      time: getCurrentTime(),
     },
   ],
   setId: (id: string) => set(() => ({ id: id })),
   editTitle: (title: string) => set(() => ({ title: title })),
   setIdentity: (identity: string) => set(() => ({ identity: identity })),
-  setConversation: (
-    conversation: Partial<Record<'AI' | 'HUMAN' | 'time', string>>[]
-  ) => set(() => ({ conversation: conversation })),
+  setConversation: (conversation: ConversationHistory[]) =>
+    set(() => ({ conversation: conversation })),
+}));
+// 是否在输出
+export const useIsTakingStore = create<{
+  isTaking: boolean;
+  // eslint-disable-next-line no-unused-vars
+  setIsTaking: (isTaking: boolean) => void;
+}>((set) => ({
+  isTaking: false,
+  setIsTaking: (isTaking: boolean) => set(() => ({ isTaking: isTaking })),
 }));
 
 type AsideStore = {
   sessions: SessionGetResDatum[];
   sessionsHistory: {
     sessionId: string;
-    history: Partial<Record<'AI' | 'HUMAN' | 'time', string>>[];
+    history: ConversationHistory[];
   }[];
   // eslint-disable-next-line no-unused-vars
   setSessions: (session: SessionGetResDatum[]) => void;
@@ -50,7 +75,7 @@ type AsideStore = {
     // eslint-disable-next-line no-unused-vars
     sessionsHistory: {
       sessionId: string;
-      history: Partial<Record<'AI' | 'HUMAN' | 'time', string>>[];
+      history: ConversationHistory[];
     }[]
   ) => void;
 };
@@ -63,7 +88,7 @@ export const useAsideStore = create<AsideStore>((set) => ({
   setSessionsHistory: (
     sessionsHistory: {
       sessionId: string;
-      history: Partial<Record<'AI' | 'HUMAN' | 'time', string>>[];
+      history: ConversationHistory[];
     }[]
   ) => set(() => ({ sessionsHistory: sessionsHistory })),
 }));

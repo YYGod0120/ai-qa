@@ -48,13 +48,6 @@ export default function Aside({
     })[0];
     if (history.history.length > 0) {
       setConversation(history.history);
-    } else {
-      // setConversation([
-      //   {
-      //     AI: '您好!您可以问我任何有关于重庆的文旅信息，如历史、名人、景点、饮食特色',
-      //     time: getCurrentTime(),
-      //   },
-      // ]);
     }
   };
   useEffect(() => {

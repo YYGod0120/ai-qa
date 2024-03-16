@@ -31,7 +31,7 @@ export async function new_chat(payload) {
       },
       body: JSON.stringify(payload),
     });
-    console.log(response);
+    console.log(response.text());
     // @ts-ignore
     // if (response.body.status === 20002) {
     //   const newAccessToken = await postRefreshPost({

@@ -118,7 +118,7 @@ function App() {
   const setIsTaking = useIsTakingStore((state) => state.setIsTaking);
   const setAsideSession = useAsideStore((state) => state.setSessions);
   const handleExport = useTranslateHtml();
-
+  // todo 思考一下要不要把他写成一个hook
   async function getData() {
     const session = await getSessionGet();
     const newSession = session.data.map((item) => {

@@ -32,7 +32,9 @@ export interface ISessionPostRes {
   status: number;
 }
 
-interface SessionPostResData {}
+interface SessionPostResData {
+  session_id: string;
+}
 
 export interface ISessionDeleteReq {
   session_id: string;

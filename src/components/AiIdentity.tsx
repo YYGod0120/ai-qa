@@ -2,7 +2,7 @@ import { UserOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { useState } from 'react';
 
-import { getSessionGet, postSessionPost } from '@/service/session';
+import { postSessionPost } from '@/service/session';
 import { useConversationStore } from '@/store';
 import { getCurrentTime } from '@/utils/time';
 
@@ -62,25 +62,9 @@ export default function AiIdentity({
           const rep = await postSessionPost({
             category: buttons[identityId].categories,
           });
-
           if (rep.info === 'success') {
-            const session = await getSessionGet();
-            console.log(
-              session.data.reverse().find((item) => {
-                item.metadata.category === buttons[identityId].categories;
-              })
-            );
-
-            setId(
-              session.data.reverse().find((item) => {
-                item.metadata.category === buttons[identityId].categories;
-              }).session_id
-            );
-            editTitle(
-              session.data.reverse().find((item) => {
-                item.metadata.category === buttons[identityId].categories;
-              }).metadata.title
-            );
+            setId(rep.data.session_id);
+            editTitle('新对话');
             setConversation([
               {
                 AI: [
@@ -93,7 +77,6 @@ export default function AiIdentity({
               },
             ]);
             getData();
-            console.log('over');
             handleChooseIdentity(true);
           }
         }}

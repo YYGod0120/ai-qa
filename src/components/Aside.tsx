@@ -7,12 +7,20 @@ import { useEffect, useState } from 'react';
 import edit from '@/aside_icon/edit.png';
 import message from '@/aside_icon/message.png';
 import { deleteSessionDelete, putSessionTitle } from '@/service/session';
-import { useAsideStore, useConversationStore } from '@/store';
-
-const classname_noselected =
-  'mb-3 h-[65px]  text-xl leading-[65px] flex items-center justify-between px-5 rounded-lg';
-const classname_selected =
-  classname_noselected + ' ' + 'border  text-selected mb-3 ';
+import { useAsideStore, useConversationStore, useIsTakingStore } from '@/store';
+function handleClass(isSelected: boolean, isDisabled: boolean = true) {
+  const classname_noselected =
+    'mb-3 h-[65px]  text-xl leading-[65px] flex items-center justify-between px-5 rounded-lg';
+  const selected = ' border text-selected mb-3';
+  const disabled = ' cursor-not-allowed';
+  return (
+    classname_noselected +
+    (isSelected
+      ? selected + ' bg-bg-selected border-selected'
+      : ' bg-white border-default-border') +
+    (isDisabled ? disabled : '')
+  );
+}
 const iconShapes = 'h-[30px] w-[30px]';
 const { Search } = Input;
 export default function Aside({
@@ -37,6 +45,8 @@ export default function Aside({
   const sessions = useAsideStore((state) => state.sessions);
   const setSession = useAsideStore((state) => state.setSessions);
   const sessionsHistory = useAsideStore((state) => state.sessionsHistory);
+  const talking = useIsTakingStore((state) => state.isTaking);
+
   const [filterStr, setFilterStr] = useState<string>('');
 
   const handleClick = async (index: string, title: string) => {
@@ -81,23 +91,21 @@ export default function Aside({
           }
           renderItem={(item, index) => (
             <div
-              className={
-                item.session_id === selectedId
-                  ? classname_selected + ' bg-bg-selected' + ' border-selected'
-                  : classname_noselected +
-                    ' bg-white' +
-                    ' border-default-border'
+              className={handleClass(item.session_id === selectedId, talking)}
+              onClick={
+                !talking
+                  ? () => {
+                      handleClick(item.session_id, item.metadata.title);
+                      setIdentity(item.metadata.category);
+                      setEditingId(-1);
+                      if (item.metadata.category === '') {
+                        handleChooseIdentity(false);
+                      } else {
+                        handleChooseIdentity(true);
+                      }
+                    }
+                  : null
               }
-              onClick={() => {
-                handleClick(item.session_id, item.metadata.title);
-                setIdentity(item.metadata.category);
-                setEditingId(-1);
-                if (item.metadata.category === '') {
-                  handleChooseIdentity(false);
-                } else {
-                  handleChooseIdentity(true);
-                }
-              }}
             >
               <div className=" flex items-center  space-x-2 ">
                 {item.session_id === selectedId ? (

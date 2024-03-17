@@ -94,8 +94,7 @@ ConversationBox.displayName = 'ConversationBox';
 function App() {
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(true);
-  //设置对话框禁用
-  const [handleOutputOver, setHandleOutputOver] = useState(true);
+
   // ai res
   const renderAIRes = useRef('');
 
@@ -178,7 +177,7 @@ function App() {
   }
 
   async function handleOutput(words_human: string) {
-    setHandleOutputOver(false);
+    setIsTaking(true);
     const askTime = getCurrentTime();
     setConversation([...conversations, { HUMAN: words_human, time: askTime }]);
     conversation_box.current.scrollTop = conversation_box.current.scrollHeight;
@@ -187,6 +186,8 @@ function App() {
       category: identity,
       content: words_human,
     });
+    console.log(rep);
+
     const reader = rep.body.getReader();
     const decoder = new TextDecoder();
 
@@ -194,23 +195,20 @@ function App() {
     while (true) {
       const { done, value } = await reader.read();
 
-      if (!talking) {
-        setIsTaking(true);
-        const decoded = decoder.decode(value, { stream: true });
-        console.log(decoded);
-        setConversation([
-          ...conversations,
-          { HUMAN: words_human, time: askTime },
-          {
-            AI: [
-              { answer: renderAIRes.current, isChatting: false },
-              { answer: decoded, isChatting: true },
-            ],
-            time: getCurrentTime(),
-          },
-        ]);
-        renderAIRes.current += decoded;
-      }
+      const decoded = decoder.decode(value, { stream: true });
+      console.log(decoded);
+      setConversation([
+        ...conversations,
+        { HUMAN: words_human, time: askTime },
+        {
+          AI: [
+            { answer: renderAIRes.current, isChatting: false },
+            { answer: decoded, isChatting: true },
+          ],
+          time: getCurrentTime(),
+        },
+      ]);
+      renderAIRes.current += decoded;
 
       if (done) {
         setConversation([
@@ -228,7 +226,7 @@ function App() {
         });
         if (data.status === 200) {
           renderAIRes.current = '';
-          setHandleOutputOver(true);
+          setIsTaking(false);
         }
         break;
       }
@@ -311,7 +309,7 @@ function App() {
                 setInputValue('');
               }
             }}
-            disabled={!handleOutputOver}
+            disabled={talking}
           ></textarea>
 
           <div

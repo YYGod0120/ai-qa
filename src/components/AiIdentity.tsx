@@ -2,8 +2,9 @@ import { UserOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { useState } from 'react';
 
-import { postSessionPost } from '@/service/session';
+import { getSessionGet, postSessionPost } from '@/service/session';
 import { useConversationStore } from '@/store';
+import { getCurrentTime } from '@/utils/time';
 
 const buttons = [
   { title: '默认', categories: 'common' },
@@ -23,7 +24,11 @@ export default function AiIdentity({
 }) {
   const [identityId, setIdentityId] = useState(0);
   const setIdentity = useConversationStore((state) => state.setIdentity);
-
+  const setId = useConversationStore((state) => state.setId);
+  const editTitle = useConversationStore((state) => state.editTitle);
+  const setConversation = useConversationStore(
+    (state) => state.setConversation
+  );
   return (
     <div className="height-[50%]  absolute left-[15%]  h-[250px] w-[40vw] translate-x-[50%] translate-y-[70%] bg-default-bg">
       <div className="space-x-3 pl-6 pt-5">
@@ -57,9 +62,39 @@ export default function AiIdentity({
           const rep = await postSessionPost({
             category: buttons[identityId].categories,
           });
+
           if (rep.info === 'success') {
-            handleChooseIdentity(true);
+            const session = await getSessionGet();
+            console.log(
+              session.data.reverse().find((item) => {
+                item.metadata.category === buttons[identityId].categories;
+              })
+            );
+
+            setId(
+              session.data.reverse().find((item) => {
+                item.metadata.category === buttons[identityId].categories;
+              }).session_id
+            );
+            editTitle(
+              session.data.reverse().find((item) => {
+                item.metadata.category === buttons[identityId].categories;
+              }).metadata.title
+            );
+            setConversation([
+              {
+                AI: [
+                  {
+                    answer:
+                      '您好!您可以问我任何有关于重庆的文旅信息，如历史、名人、景点、饮食特色',
+                  },
+                ],
+                time: getCurrentTime(),
+              },
+            ]);
             getData();
+            console.log('over');
+            handleChooseIdentity(true);
           }
         }}
       >

@@ -45,7 +45,9 @@ export default function History({
         {conversations
           .filter((item) => {
             const conversationValues = Object.values(item);
-            return (conversationValues[0] as string).includes(filterStr);
+            return filterStr
+              ? (conversationValues[0] as string).includes(filterStr)
+              : conversationValues[0];
           })
           .map((conversation, index) => {
             const conversationValues = Object.values(conversation); //0是对话内容，1是时间

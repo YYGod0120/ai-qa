@@ -3,7 +3,7 @@ import { Button } from 'antd';
 import { useState } from 'react';
 
 import { postSessionPost } from '@/service/session';
-import { useConversationStore } from '@/store';
+import { useAsideStore, useConversationStore } from '@/store';
 import { getCurrentTime } from '@/utils/time';
 
 const buttons = [
@@ -17,20 +17,23 @@ const buttons = [
 ];
 export default function AiIdentity({
   handleChooseIdentity,
+  setLoading,
   getData,
 }: {
   handleChooseIdentity: React.Dispatch<React.SetStateAction<boolean>>;
+  setLoading: any;
   getData: any;
 }) {
   const [identityId, setIdentityId] = useState(0);
   const setIdentity = useConversationStore((state) => state.setIdentity);
   const setId = useConversationStore((state) => state.setId);
+  const setSelectedId = useAsideStore((state) => state.setSelectedId);
   const editTitle = useConversationStore((state) => state.editTitle);
   const setConversation = useConversationStore(
     (state) => state.setConversation
   );
   return (
-    <div className="height-[50%]  absolute left-[15%]  h-[250px] w-[40vw] translate-x-[50%] translate-y-[70%] bg-default-bg">
+    <div className="height-[50%]  absolute left-[20%]  h-[250px] w-[40vw] translate-x-[50%] translate-y-[50%] bg-default-bg">
       <div className="space-x-3 pl-6 pt-5">
         <span className="text-lg">AI身份选择</span>
         <span className="text-sm">
@@ -59,11 +62,14 @@ export default function AiIdentity({
         className="mx-[15vw] w-[10vw]"
         onClick={async () => {
           setIdentity(buttons[identityId].categories);
+          setLoading(true);
+          handleChooseIdentity(true);
           const rep = await postSessionPost({
             category: buttons[identityId].categories,
           });
           if (rep.info === 'success') {
             setId(rep.data.session_id);
+            setSelectedId(rep.data.session_id);
             editTitle('新对话');
             setConversation([
               {
@@ -77,7 +83,6 @@ export default function AiIdentity({
               },
             ]);
             getData();
-            handleChooseIdentity(true);
           }
         }}
       >

@@ -1,5 +1,6 @@
 import '@/styles/list_item_fade.css';
 
+// todo 加小标题
 import { DeleteOutlined } from '@ant-design/icons';
 import { Button, Input, List } from 'antd';
 import { useEffect, useState } from 'react';
@@ -32,7 +33,6 @@ export default function Aside({
   loading: boolean;
   getData: any;
 }) {
-  const [selectedId, setSelectedId] = useState('');
   const [editingId, setEditingId] = useState(-1);
   const title = useConversationStore((state) => state.title);
   const id = useConversationStore((state) => state.id);
@@ -44,9 +44,10 @@ export default function Aside({
   );
   const sessions = useAsideStore((state) => state.sessions);
   const setSession = useAsideStore((state) => state.setSessions);
+  const selectedId = useAsideStore((state) => state.selectedId);
+  const setSelectedId = useAsideStore((state) => state.setSelectedId);
   const sessionsHistory = useAsideStore((state) => state.sessionsHistory);
   const talking = useIsTakingStore((state) => state.isTaking);
-
   const [filterStr, setFilterStr] = useState<string>('');
 
   const handleClick = async (index: string, title: string) => {
@@ -130,13 +131,21 @@ export default function Aside({
                     className={
                       item.session_id === selectedId
                         ? 'left-to-right-fade w-[200px]'
-                        : 'overflow-hidden text-nowrap pl-[38px] w-[250px]'
+                        : 'overflow-hidden text-nowrap pl-[38px] w-[220px]'
                     }
                   >
                     {item.metadata.title}
                   </span>
                 )}
+                {item.session_id !== selectedId ? (
+                  <div className="text-sm self-end pb-3 ">
+                    {item.metadata.category}
+                  </div>
+                ) : (
+                  <></>
+                )}
               </div>
+
               {item.session_id === selectedId ? (
                 <div className="flex space-x-5">
                   <img
@@ -201,6 +210,9 @@ export default function Aside({
             }}
             onClick={() => {
               deleteSessionDelete({ session_id: id });
+              setSession(
+                sessions.filter((session) => session.session_id !== id)
+              );
               getData();
             }}
             icon={<DeleteOutlined />}

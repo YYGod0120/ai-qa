@@ -64,6 +64,7 @@ export const useIsTakingStore = create<{
 
 type AsideStore = {
   sessions: SessionGetResDatum[];
+  selectedId: string;
   sessionsHistory: {
     sessionId: string;
     history: ConversationHistory[];
@@ -78,11 +79,14 @@ type AsideStore = {
       history: ConversationHistory[];
     }[]
   ) => void;
+  // eslint-disable-next-line no-unused-vars
+  setSelectedId: (sessionId: string) => void;
 };
 
 export const useAsideStore = create<AsideStore>((set) => ({
   sessions: [],
   sessionsHistory: [],
+  selectedId: '',
   setSessions: (session: SessionGetResDatum[]) =>
     set(() => ({ sessions: session })),
   setSessionsHistory: (
@@ -91,4 +95,6 @@ export const useAsideStore = create<AsideStore>((set) => ({
       history: ConversationHistory[];
     }[]
   ) => set(() => ({ sessionsHistory: sessionsHistory })),
+  setSelectedId: (selectedId: string) =>
+    set(() => ({ selectedId: selectedId })),
 }));

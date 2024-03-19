@@ -97,7 +97,6 @@ function App() {
 
   // ai res
   const renderAIRes = useRef('');
-
   const [largerInput, setLargerInput] = useState(false);
   const [delTitle, setDelTitle] = useState('');
   const [deleteId, setDeleteId] = useState<number>(null);
@@ -116,6 +115,7 @@ function App() {
   const talking = useIsTakingStore((state) => state.isTaking);
   const setIsTaking = useIsTakingStore((state) => state.setIsTaking);
   const setAsideSession = useAsideStore((state) => state.setSessions);
+
   const handleExport = useTranslateHtml();
   // todo 思考一下要不要把他写成一个hook
   async function getData() {
@@ -196,7 +196,6 @@ function App() {
       const { done, value } = await reader.read();
 
       const decoded = decoder.decode(value, { stream: true });
-      console.log(decoded);
       setConversation([
         ...conversations,
         { HUMAN: words_human, time: askTime },
@@ -284,6 +283,12 @@ function App() {
               handleExport={handleExport}
               ref={conversation_box}
             ></ConversationBox>
+          ) : !chooseIdentityDone ? (
+            <AiIdentity
+              handleChooseIdentity={setChooseIdentityDone}
+              setLoading={setLoading}
+              getData={getData}
+            ></AiIdentity>
           ) : (
             <div className="flex items-center justify-center h-[70vh]">
               <Spin size="large" />
@@ -348,14 +353,6 @@ function App() {
         <></>
       )}
       {historyPopup ? <History handleClose={setHistoryPopup} /> : null}
-      {!chooseIdentityDone ? (
-        <AiIdentity
-          handleChooseIdentity={setChooseIdentityDone}
-          getData={getData}
-        ></AiIdentity>
-      ) : (
-        <></>
-      )}
       {<Login></Login>}
     </div>
   );

@@ -120,15 +120,19 @@ function App() {
   // todo 思考一下要不要把他写成一个hook
   async function getData() {
     const session = await getSessionGet();
-    const newSession = session.data.map((item) => {
-      return {
-        ...item,
-        metadata: {
-          ...item.metadata,
-          title: item.metadata.title ? item.metadata.title : '新对话',
-        },
-      };
-    });
+    const newSession = session.data
+      .filter((item) => {
+        return item.deleted_at === null;
+      })
+      .map((item) => {
+        return {
+          ...item,
+          metadata: {
+            ...item.metadata,
+            title: item.metadata.title ? item.metadata.title : '新对话',
+          },
+        };
+      });
     const allHistory = await Promise.all(
       newSession.map(async (session) => {
         const conversation = await getHistoryGet({

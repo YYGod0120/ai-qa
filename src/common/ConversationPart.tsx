@@ -1,10 +1,10 @@
+import Markdown from 'marked-react';
 import { ReactNode } from 'react';
 import Typist from 'react-typist';
 
 import AI from '@/components/AI';
 import USER from '@/components/USER';
 import { AI as AIType } from '@/store';
-
 export function Dialog(
   identity: 'AI' | 'USER',
   word: string | AIType,
@@ -40,10 +40,13 @@ export function Dialog(
                 }}
                 className="inline"
               >
-                <span>{item.answer}</span>
+                <Markdown>{item.answer}</Markdown>
               </Typist>
             ) : (
-              <span>{item.answer || '等待时间过久，请重新问答'}</span>
+              <>
+                {<Markdown>{item.answer}</Markdown> ||
+                  '等待时间过久，请重新问答'}
+              </>
             );
           })}
         </div>

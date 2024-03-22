@@ -215,7 +215,10 @@ function App() {
         { HUMAN: words_human, time: askTime },
         {
           AI: [
-            { answer: renderAIRes.current, isChatting: false },
+            {
+              answer: renderAIRes.current,
+              isChatting: false,
+            },
             { answer: decoded, isChatting: true },
           ],
           time: getCurrentTime(),
@@ -228,7 +231,12 @@ function App() {
           ...conversations,
           { HUMAN: words_human, time: askTime },
           {
-            AI: [{ answer: renderAIRes.current, isChatting: false }],
+            AI: [
+              {
+                answer: renderAIRes.current,
+                isChatting: false,
+              },
+            ],
             time: getCurrentTime(),
           },
         ]);

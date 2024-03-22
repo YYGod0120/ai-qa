@@ -1,3 +1,4 @@
+import { deleteMessage } from '@/service/chat';
 import { useConversationStore } from '@/store';
 export default function Popup({
   title,
@@ -12,7 +13,9 @@ export default function Popup({
     (state) => state.setConversation
   );
   const conversation = useConversationStore((state) => state.conversation);
-  const newCon = id ? conversation.filter((_, index) => index !== id) : [{}];
+  const session_id = useConversationStore((state) => state.id);
+
+  const newCon = id ? conversation.filter((_, index) => index !== id) : [];
   return (
     <div className="popup-shadow absolute left-[50%] top-[50%] flex h-[247px] w-[529px] translate-x-[-50%] translate-y-[-50%] flex-col items-center justify-center rounded-xl border border-border-popup bg-white">
       <span className="text-2xl">{title}</span>
@@ -20,6 +23,10 @@ export default function Popup({
         <button
           className="h-[46px] w-[170px] rounded-xl bg-bg-popup-confirm text-white"
           onClick={() => {
+            deleteMessage({
+              session_id: session_id,
+              message_id: conversation[id].message_id,
+            });
             setConversation(newCon);
             handleConfirm('');
           }}

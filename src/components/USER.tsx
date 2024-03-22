@@ -13,10 +13,12 @@ export default function USER({
 }: {
   children: ReactNode;
   id: number;
+
   time: string;
   handleDelete: React.Dispatch<React.SetStateAction<string | number>>[];
 }) {
   const [setDelTitle, setDeleteId] = handleDelete;
+
   return (
     <div className="mr-5 flex items-center justify-end ">
       <div className="flex flex-col items-end ">

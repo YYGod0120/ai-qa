@@ -11,6 +11,7 @@ type ConversationHistory = {
   AI?: AI;
   HUMAN?: string;
   time: string;
+  message_id?: string; //消息id
 };
 
 type Conversation = {

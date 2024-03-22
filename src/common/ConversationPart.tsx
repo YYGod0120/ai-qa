@@ -9,6 +9,7 @@ export function Dialog(
   identity: 'AI' | 'USER',
   word: string | AIType,
   id: number,
+
   handleDelete: (
     | React.Dispatch<React.SetStateAction<string>>
     | React.Dispatch<React.SetStateAction<number>>
@@ -27,30 +28,25 @@ export function Dialog(
         handleExport={handleExport}
         time={time}
       >
-        {word.length > 1 ? (
-          <div className="">
-            {(word as AIType).map((item) => {
-              return item.isChatting ? (
-                <Typist
-                  avgTypingDelay={70}
-                  cursor={{ show: false }}
-                  key={item.answer}
-                  onTypingDone={() => {
-                    handleOverTaking(false);
-                  }}
-                  className="inline"
-                >
-                  <span>{item.answer}</span>
-                </Typist>
-              ) : (
+        <div className="">
+          {(word as AIType).map((item) => {
+            return item.isChatting ? (
+              <Typist
+                avgTypingDelay={70}
+                cursor={{ show: false }}
+                key={item.answer}
+                onTypingDone={() => {
+                  handleOverTaking(false);
+                }}
+                className="inline"
+              >
                 <span>{item.answer}</span>
-              );
-            })}
-          </div>
-        ) : (
-          <span>{(word as AIType)[0].answer}</span>
-        )}
-
+              </Typist>
+            ) : (
+              <span>{item.answer || '等待时间过久，请重新问答'}</span>
+            );
+          })}
+        </div>
         {other}
       </AI>
     ) : (
@@ -60,6 +56,13 @@ export function Dialog(
       </USER>
     )
   ) : (
-    <></>
+    <AI
+      id={id}
+      handleDelete={handleDelete}
+      handleExport={handleExport}
+      time={time}
+    >
+      <div className="">回答错误，请刷新重试</div>
+    </AI>
   );
 }

@@ -14,6 +14,13 @@ export const postChatPost = async (payload: IChatPostReq) => {
   const res = await service.post(`/chat`, payload);
   return res;
 };
+export const deleteMessage = async (payload: {
+  session_id: string;
+  message_id: string;
+}): Promise<IHistoryGetRes> => {
+  const res = await service.delete(`/message`, { data: payload });
+  return res.data;
+};
 export const postMes = async (payload: {
   session_id: string;
   answer: string;

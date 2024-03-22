@@ -61,7 +61,7 @@ const ConversationBox = forwardRef(
         id="conversation_box"
       >
         {conversations.map((conversation, index) => {
-          const conversationValues = Object.values(conversation); //1是时间 0是对话内容
+          const conversationValues = Object.values(conversation); //1是时间 0是对话内容,2是message——id
           const conversationKeys = Object.keys(conversation);
           return Dialog(
             conversationKeys[0] as 'AI' | 'USER',
@@ -148,11 +148,13 @@ function App() {
                     { answer: data.content, isChatting: false },
                   ],
                   time: formattedTimed(data.created_at),
+                  message_id: data.uuid,
                 };
               } else {
                 return {
                   [data.role.toUpperCase()]: data.content,
                   time: formattedTimed(data.created_at),
+                  message_id: data.uuid,
                 };
               }
             }),
@@ -184,6 +186,14 @@ function App() {
     setIsTaking(true);
     const askTime = getCurrentTime();
     setConversation([...conversations, { HUMAN: words_human, time: askTime }]);
+    setConversation([
+      ...conversations,
+      { HUMAN: words_human, time: askTime },
+      {
+        AI: [{ answer: '等待中。。。。', isChatting: true }],
+        time: getCurrentTime(),
+      },
+    ]);
     conversation_box.current.scrollTop = conversation_box.current.scrollHeight;
     const rep = await new_chat({
       session_id: id,

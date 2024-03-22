@@ -15,12 +15,14 @@ export default function AI({
 }: {
   children: ReactNode;
   id: number;
+
   time?: string;
   handleDelete: React.Dispatch<React.SetStateAction<string | number>>[];
   // eslint-disable-next-line no-unused-vars
   handleExport: (id: number) => Promise<void>;
 }) {
   const [setDelTitle, setDeleteId] = handleDelete;
+
   return (
     <div className="flex items-start">
       <img

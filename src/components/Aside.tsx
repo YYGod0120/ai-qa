@@ -1,6 +1,5 @@
 import '@/styles/list_item_fade.css';
 
-// todo 加小标题
 import { DeleteOutlined } from '@ant-design/icons';
 import { Button, Input, List } from 'antd';
 import { useEffect, useState } from 'react';
@@ -9,6 +8,15 @@ import edit from '@/aside_icon/edit.png';
 import message from '@/aside_icon/message.png';
 import { deleteSessionDelete, putSessionTitle } from '@/service/session';
 import { useAsideStore, useConversationStore, useIsTakingStore } from '@/store';
+const categories = {
+  common: '默认',
+  attraction: '景点',
+  human: '人文历史',
+  food: '美食',
+  transport: '交通',
+  tour: '乡村旅游',
+  hot: '网红/热门',
+};
 function handleClass(isSelected: boolean, isDisabled: boolean = true) {
   const classname_noselected =
     'mb-3 h-[65px]  text-xl leading-[65px] flex items-center justify-between px-5 rounded-lg';
@@ -139,7 +147,7 @@ export default function Aside({
                 )}
                 {item.session_id !== selectedId ? (
                   <div className="text-sm self-end pb-3 ">
-                    {item.metadata.category}
+                    {categories[item.metadata.category]}
                   </div>
                 ) : (
                   <></>

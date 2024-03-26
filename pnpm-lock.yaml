@@ -29,6 +29,9 @@ dependencies:
   file-saver:
     specifier: ^2.0.5
     version: 2.0.5
+  marked:
+    specifier: ^12.0.1
+    version: 12.0.1
   marked-react:
     specifier: ^2.0.0
     version: 2.0.0(react@18.2.0)
@@ -3160,6 +3163,12 @@ packages:
     dependencies:
       marked: 6.0.0
       react: 18.2.0
+    dev: false
+
+  /marked@12.0.1:
+    resolution: {integrity: sha512-Y1/V2yafOcOdWQCX0XpAKXzDakPOpn6U0YLxTJs3cww6VxOzZV1BTOOYWLvH3gX38cq+iLwljHHTnMtlDfg01Q==}
+    engines: {node: '>= 18'}
+    hasBin: true
     dev: false
 
   /marked@6.0.0:
